@@ -1,0 +1,13 @@
+{
+  "name": "pilar-laboratorio-elastico",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Análise exploratória de pilares retangulares com modelo elástico idealizado.",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test",
+    "check": "node --check server.js && node --check src/analysis.js && node --check src/app.js"
+  }
+}

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#163347" />
+    <meta name="description" content="Laboratório experimental de geometria, esbeltez e estabilidade elástica de pilares. Sem verificação normativa ou dimensionamento estrutural." />
+    <title>Pilar · Laboratório elástico</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+    <script type="module" src="/src/app.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#inicio" aria-label="Pilar, início">
+        <span class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>Pilar<span class="brand-dot">.</span></strong><small>Laboratório elástico</small></span>
+      </a>
+      <span class="header-tag"><span class="status-dot"></span> Modelo experimental</span>
+    </header>
+
+    <main id="inicio" class="page-shell">
+      <section class="intro" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">Geometria, esforços e estabilidade</p>
+          <h1 id="page-title">Entenda o comportamento<br class="desktop-break" /> elástico do seu pilar.</h1>
+          <p class="intro-description">Explore a seção, os comprimentos livres e as hipóteses de apoio. Compare esbeltez, força crítica teórica de Euler e tensões de primeira ordem.</p>
+        </div>
+        <div class="intro-meta"><span class="meta-label">Cenário inicial</span><strong>9 × 30 cm</strong><span>6 m livres, sem travamento lateral</span><span class="version-label">Modelo elástico v1.0</span></div>
+      </section>
+
+      <aside class="scope-banner" aria-label="Escopo do modelo">
+        <span class="scope-icon" aria-hidden="true">!</span>
+        <div><strong>Sem verificação normativa</strong><p>O coeficiente adicional γn por dimensão não é aplicado neste modelo. A seção de 9 cm e o trecho livre de 6 m não recebem validação para execução. Os resultados são experimentais e não constituem dimensionamento de obra.</p></div>
+      </aside>
+
+      <div class="workspace-layout">
+        <section class="input-panel panel" aria-labelledby="input-title">
+          <div class="panel-heading"><div><p class="eyebrow">01 / Modelo</p><h2 id="input-title">Defina o cenário</h2></div><span class="editable-tag">Editável</span></div>
+          <form id="column-form">
+            <fieldset>
+              <legend><span class="step-number">1</span> Seção e comprimentos livres</legend>
+              <div class="field-grid">
+                <label class="field" for="bxCm"><span>Espessura b<sub>x</sub></span><span class="input-wrap"><input id="bxCm" name="bxCm" type="number" value="9" min="0.01" max="1000" step="any" required /><span class="unit">cm</span></span></label>
+                <label class="field" for="byCm"><span>Largura b<sub>y</sub></span><span class="input-wrap"><input id="byCm" name="byCm" type="number" value="30" min="0.01" max="1000" step="any" required /><span class="unit">cm</span></span></label>
+                <label class="field" for="lengthXM"><span>Comprimento livre L<sub>x</sub></span><span class="input-wrap"><input id="lengthXM" name="lengthXM" type="number" value="6" min="0.01" max="1000" step="any" required /><span class="unit">m</span></span></label>
+                <label class="field" for="lengthYM"><span>Comprimento livre L<sub>y</sub></span><span class="input-wrap"><input id="lengthYM" name="lengthYM" type="number" value="6" min="0.01" max="1000" step="any" required /><span class="unit">m</span></span></label>
+              </div>
+              <p class="field-help">São trechos livres por eixo de flexão. O cenário inicial representa <strong>6 m sem travamento lateral</strong>, não a altura total de uma residência.</p>
+            </fieldset>
+
+            <fieldset>
+              <legend><span class="step-number">2</span> Hipóteses de apoio e rigidez</legend>
+              <label class="field full-width" for="kX"><span>Fator de comprimento efetivo K<sub>x</sub></span><select id="kX" name="kX"><option value="0.5">0,5 · biengastado ideal</option><option value="0.7">0,7 · engastado/articulado ideal (aprox.)</option><option value="1" selected>1,0 · biarticulado ideal</option><option value="2">2,0 · balanço ideal</option></select></label>
+              <label class="field full-width" for="kY"><span>Fator de comprimento efetivo K<sub>y</sub></span><select id="kY" name="kY"><option value="0.5">0,5 · biengastado ideal</option><option value="0.7">0,7 · engastado/articulado ideal (aprox.)</option><option value="1" selected>1,0 · biarticulado ideal</option><option value="2">2,0 · balanço ideal</option></select></label>
+              <p class="field-help">K = 1 é a hipótese inicial. K ≈ 0,7 representa o caso engastado/articulado ideal sem deslocamento lateral. Os vínculos reais e a estabilidade da estrutura precisam ser determinados à parte.</p>
+              <div class="field-grid">
+                <label class="field" for="eGPa"><span>Módulo elástico E</span><span class="input-wrap"><input id="eGPa" name="eGPa" type="number" value="25" min="0.01" max="1000" step="any" required /><span class="unit">GPa</span></span></label>
+                <label class="field" for="rigidityFactor"><span>Fração de rigidez EI</span><span class="input-wrap"><input id="rigidityFactor" name="rigidityFactor" type="number" value="1" min="0.001" max="1" step="any" required /><span class="unit">×</span></span></label>
+              </div>
+              <p class="field-help">E = 25 GPa é uma <strong>hipótese editável</strong>, sem relação estimada com fck. A fração de EI também é informada pelo usuário; o modelo não estima fissuração ou fluência.</p>
+            </fieldset>
+
+            <fieldset>
+              <legend><span class="step-number">3</span> Esforços aplicados</legend>
+              <div class="field-grid">
+                <label class="field" for="nKn"><span>Força normal N</span><span class="input-wrap"><input id="nKn" name="nKn" type="number" value="0" min="0" max="10000000" step="any" required /><span class="unit">kN</span></span></label>
+                <label class="field" for="loadFactor"><span>Multiplicador de ações</span><span class="input-wrap"><input id="loadFactor" name="loadFactor" type="number" value="1" min="0.001" max="1000" step="any" required /><span class="unit">×</span></span></label>
+                <label class="field" for="mxKnm"><span>Momento M<sub>x</sub></span><span class="input-wrap"><input id="mxKnm" name="mxKnm" type="number" value="0" min="-10000000" max="10000000" step="any" required /><span class="unit">kN·m</span></span></label>
+                <label class="field" for="myKnm"><span>Momento M<sub>y</sub></span><span class="input-wrap"><input id="myKnm" name="myKnm" type="number" value="0" min="-10000000" max="10000000" step="any" required /><span class="unit">kN·m</span></span></label>
+              </div>
+              <p class="field-help">N positivo representa compressão. Os momentos admitem sinais positivos e negativos. O multiplicador atua em N, M<sub>x</sub> e M<sub>y</sub>; ele é independente de γn.</p>
+            </fieldset>
+            <div class="form-actions"><button class="button button-primary" type="submit">Atualizar análise <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4 14 14 4M5 4h9v9" /></svg></button><button class="button button-subtle" type="button" id="reset-button" title="Restaurar os valores iniciais">Restaurar</button></div>
+            <p id="form-error" class="form-error" role="alert" hidden></p>
+            <p id="form-state" class="form-state">Os resultados refletem os valores enviados para análise.</p>
+          </form>
+        </section>
+
+        <section id="results" class="results-column" aria-labelledby="results-title" aria-busy="false">
+          <div class="results-heading"><div><p class="eyebrow">02 / Leitura do modelo</p><h2 id="results-title">Resultados experimentais</h2></div><div class="result-tools"><button id="export-button" class="icon-button" type="button" title="Exportar cenário e resultados em JSON"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 15v5h16v-5" /></svg><span>JSON</span></button><button id="print-button" class="icon-button" type="button" title="Imprimir análise ou salvar em PDF"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V3h10v5M7 17H4V9h16v8h-3M7 14h10v7H7zM17 12h.01" /></svg><span>Imprimir</span></button></div></div>
+
+          <div id="status" class="analysis-status" role="status" aria-live="polite"></div>
+
+          <div class="metric-grid">
+            <article class="metric-card"><span class="metric-label">Seção transversal</span><strong id="metric-section">9 × 30 <small>cm</small></strong><span id="metric-area" class="metric-detail">Área: 270 cm²</span></article>
+            <article class="metric-card"><span class="metric-label">Maior esbeltez λ</span><strong id="metric-slenderness">—</strong><span id="metric-slenderness-axis" class="metric-detail">Geometria por eixo</span></article>
+            <article class="metric-card critical-metric"><span class="metric-label">Menor N<sub>cr</sub> de Euler</span><strong id="metric-ncr">— <small>kN</small></strong><span id="metric-ncr-axis" class="metric-detail">Força crítica teórica</span></article>
+          </div>
+
+          <article class="panel geometry-panel" aria-labelledby="geometry-title">
+            <div class="panel-heading compact"><div><h3 id="geometry-title">Geometria e propriedades</h3><p>Seção retangular bruta e eixo de flexão</p></div><span class="quiet-chip">A × I × r</span></div>
+            <div class="geometry-layout">
+              <div class="geometry-figures">
+                <figure class="section-figure"><svg id="section-diagram" viewBox="0 0 210 225" role="img" aria-label="Seção transversal retangular com eixos x e y"><defs><marker id="axis-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#678492" /></marker></defs><rect id="section-shape" x="83" y="43" width="44" height="147" rx="2" class="section-shape" /><line x1="43" y1="116" x2="167" y2="116" class="diagram-axis" marker-end="url(#axis-arrow)" /><line x1="105" y1="205" x2="105" y2="20" class="diagram-axis" marker-end="url(#axis-arrow)" /><text x="175" y="120" class="axis-label">x</text><text x="110" y="22" class="axis-label">y</text><line id="dimension-bx" x1="83" y1="203" x2="127" y2="203" class="diagram-dimension" /><line id="dimension-bx-start" x1="83" y1="198" x2="83" y2="208" class="diagram-dimension" /><line id="dimension-bx-end" x1="127" y1="198" x2="127" y2="208" class="diagram-dimension" /><text id="diagram-bx" x="105" y="220" text-anchor="middle" class="dimension-label">9 cm</text><line id="dimension-by" x1="65" y1="43" x2="65" y2="190" class="diagram-dimension" /><line id="dimension-by-start" x1="60" y1="43" x2="70" y2="43" class="diagram-dimension" /><line id="dimension-by-end" x1="60" y1="190" x2="70" y2="190" class="diagram-dimension" /><text id="diagram-by" x="51" y="116" text-anchor="middle" transform="rotate(-90 51 116)" class="dimension-label">30 cm</text></svg><figcaption>Seção transversal</figcaption></figure>
+                <figure class="column-figure"><svg viewBox="0 0 150 225" role="img" aria-label="Esquema de um pilar sem travamento lateral intermediário"><path d="M70 30h23v155H70z" class="column-shape" /><path d="M93 30l9-6v155l-9 6z" class="column-face" /><path d="M70 30l9-6h23l-9 6z" class="column-top" /><path d="M59 30h-9v155h9M45 30h10M45 185h10" class="diagram-dimension" /><path d="M62 30H118M62 185H118" class="diagram-guide" /><text id="diagram-length" x="37" y="108" text-anchor="middle" transform="rotate(-90 37 108)" class="dimension-label">6 m livres</text></svg><figcaption>Trecho livre, sem apoio intermediário</figcaption></figure>
+              </div>
+              <dl class="geometry-values"><div><dt>Área A</dt><dd id="area-value">—</dd></div><div><dt>Inércia I<sub>x</sub></dt><dd id="ix-value">—</dd></div><div><dt>Inércia I<sub>y</sub></dt><dd id="iy-value">—</dd></div><div><dt>Raio r<sub>x</sub> / r<sub>y</sub></dt><dd id="radius-value">—</dd></div><div><dt>Módulo W<sub>x</sub> / W<sub>y</sub></dt><dd id="section-modulus-value">—</dd></div><div><dt>Rigidez informada</dt><dd id="rigidity-value">—</dd></div></dl>
+            </div>
+            <p class="panel-footnote">x: flexão com I<sub>x</sub> = b<sub>x</sub>b<sub>y</sub>³/12. y: flexão com I<sub>y</sub> = b<sub>y</sub>b<sub>x</sub>³/12. O esquema não identifica os vínculos reais.</p>
+          </article>
+
+          <article class="panel stability-panel" aria-labelledby="stability-title">
+            <div class="panel-heading compact"><div><h3 id="stability-title">Estabilidade elástica por eixo</h3><p>Euler com comprimento efetivo L<sub>e</sub> = K · L</p></div><span class="quiet-chip">Hipóteses ideais</span></div>
+            <div class="table-scroll"><table class="result-table"><thead><tr><th scope="col">Grandeza</th><th scope="col">Eixo x</th><th scope="col">Eixo y</th></tr></thead><tbody><tr><th scope="row">Comprimento efetivo L<sub>e</sub></th><td id="x-effective-length">—</td><td id="y-effective-length">—</td></tr><tr><th scope="row">Esbeltez λ = L<sub>e</sub> / r</th><td id="x-slenderness">—</td><td id="y-slenderness">—</td></tr><tr class="highlight-row"><th scope="row">Força crítica teórica N<sub>cr</sub></th><td id="x-ncr">—</td><td id="y-ncr">—</td></tr><tr><th scope="row">Relação N / N<sub>cr</sub></th><td id="x-ratio">—</td><td id="y-ratio">—</td></tr><tr><th scope="row">Amplificação teórica 1 / (1 − N/N<sub>cr</sub>)</th><td id="x-amplification">—</td><td id="y-amplification">—</td></tr><tr><th scope="row">Momento amplificado teórico</th><td id="x-amplified-moment">—</td><td id="y-amplified-moment">—</td></tr></tbody></table></div>
+            <p class="panel-footnote">N<sub>cr</sub> não é uma carga admissível nem capacidade resistente. A amplificação é uma aproximação teórica definida apenas quando N &lt; N<sub>cr</sub> nos dois eixos; não substitui uma análise de segunda ordem de concreto armado.</p>
+          </article>
+
+          <article class="panel stress-panel" aria-labelledby="stress-title">
+            <div class="panel-heading compact"><div><h3 id="stress-title">Tensões elásticas de primeira ordem</h3><p>Seção bruta · compressão positiva</p></div><span class="quiet-chip">Sem resistência</span></div>
+            <div class="applied-loads" aria-label="Esforços após multiplicador"><span>N <strong id="applied-n">—</strong></span><span>M<sub>x</sub> <strong id="applied-mx">—</strong></span><span>M<sub>y</sub> <strong id="applied-my">—</strong></span></div>
+            <div class="stress-summary"><div><span>Tensão mínima</span><strong id="stress-min">—</strong></div><div><span>Tensão máxima</span><strong id="stress-max">—</strong></div></div>
+            <div class="table-scroll"><table class="result-table corner-table"><thead><tr><th scope="col">Canto (x, y)</th><th scope="col">Tensão σ</th></tr></thead><tbody id="stress-corners"></tbody></table></div>
+            <p id="stress-note" class="panel-footnote">Tensões calculadas com os esforços de primeira ordem, sem usar os momentos amplificados. Valores negativos indicam tração; nenhuma resistência do concreto ou da armadura é verificada.</p>
+          </article>
+
+          <article class="panel method-panel" aria-labelledby="method-title">
+            <details open><summary id="method-title"><span>Premissas e limites do laboratório</span><span class="details-icon" aria-hidden="true">+</span></summary><div class="method-content"><div class="formula-grid"><div><span>Esbeltez</span><strong>λ = K · L / r</strong></div><div><span>Euler</span><strong>N<sub>cr</sub> = π² · E · I · α / (K · L)²</strong></div><div><span>Tensão de primeira ordem</span><strong>σ = N/A + M<sub>x</sub> · y/I<sub>x</sub> + M<sub>y</sub> · x/I<sub>y</sub></strong></div></div><p>α é a fração de rigidez EI informada e atua apenas na análise de Euler e na amplificação. As tensões usam a geometria bruta. Este modelo representa uma barra ideal com seção retangular e propriedades constantes. A geometria, os apoios, E, α e os esforços são hipóteses de entrada.</p><ul id="model-notes" class="model-notes"></ul><p class="model-limit"><strong>Fora do modelo:</strong> fissuração, fluência, armaduras, imperfeições, capacidade resistente, conexões, interação com a estrutura e verificações normativas. Não usar os resultados como dimensionamento para execução de uma obra.</p></div></details>
+          </article>
+        </section>
+      </div>
+
+      <footer class="site-footer"><span><strong>Pilar.</strong> Laboratório elástico · v1.0</span><span>Resultados experimentais · Sem verificação normativa</span></footer>
+    </main>
+    <div id="notification" class="notification" role="status" aria-live="polite" hidden></div>
+  </body>
+</html>
