@@ -5,11 +5,9 @@ import path from 'node:path';
 // Build a self-contained page that can be opened directly with file://.
 // The checked-in application files stay unchanged; no package install is needed.
 const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
-const [page, styles, engine, application] = await Promise.all([
+const [page, styles] = await Promise.all([
   readFile(path.join(repositoryRoot, 'index.html'), 'utf8'),
   readFile(path.join(repositoryRoot, 'src/styles.css'), 'utf8'),
-  readFile(path.join(repositoryRoot, 'src/analysis.js'), 'utf8'),
-  readFile(path.join(repositoryRoot, 'src/app.js'), 'utf8'),
 ]);
 
 function replaceExactlyOnce(source, pattern, replacement, label) {
@@ -20,18 +18,40 @@ function replaceExactlyOnce(source, pattern, replacement, label) {
   return source.replace(pattern, () => replacement);
 }
 
-const classicEngine = engine.replace(/^export\s+(?=class\s+InputValidationError\b|function\s+analyzeColumn\b)/gm, '');
-const classicApplication = replaceExactlyOnce(
-  application,
-  /^import\s+\{\s*analyzeColumn,\s*InputValidationError\s*\}\s+from\s+['"]\.\/analysis\.js['"];?\s*$/gm,
-  '',
-  'analysis import',
-);
-const bundledScript = `'use strict';\n(() => {\n${classicEngine}\n${classicApplication}\n})();`;
-
-if (/^\s*(?:import|export)\s/m.test(bundledScript)) {
-  throw new Error('An unsupported module declaration remains in the offline script.');
+// These local modules use named imports and named declarations only. Keep each
+// one in its own scope so shared helper names cannot collide in the HTML file.
+const allowedModules = new Set(['app.js', 'analysis.js', 'section.js', 'chart.js']);
+const completed = new Set();
+const visiting = new Set();
+const compiledModules = [];
+async function compileModule(name) {
+  if (!allowedModules.has(name)) throw new Error(`Unsupported offline dependency: ${name}`);
+  if (completed.has(name)) return;
+  if (visiting.has(name)) throw new Error(`Circular offline dependency: ${name}`);
+  visiting.add(name);
+  let source = await readFile(path.join(repositoryRoot, 'src', name), 'utf8');
+  const importPattern = /^[ \t]*import\s+\{([^}]+)\}\s+from\s+['"]\.\/([\w-]+\.js)['"];?[ \t]*(?:\r?\n|$)/gm;
+  const imports = [...source.matchAll(importPattern)];
+  for (const match of imports) await compileModule(match[2]);
+  source = source.replace(importPattern, (_, names, dependency) => {
+    const bindings = names.trim().split(',').filter((item) => item.trim()).map((item) => {
+      const match = item.trim().match(/^([A-Za-z_$][\w$]*)(?:\s+as\s+([A-Za-z_$][\w$]*))?$/);
+      if (!match) throw new Error(`Unsupported named import in ${name}: ${item}`);
+      return match[2] ? `${match[1]}: ${match[2]}` : match[1];
+    });
+    return `const { ${bindings.join(', ')} } = __modules[${JSON.stringify(dependency)}];\n`;
+  });
+  const exports = [...source.matchAll(/^[ \t]*export\s+(?:(?:async\s+)?function|class|const|let)\s+([A-Za-z_$][\w$]*)/gm)].map((match) => match[1]);
+  source = source.replace(/^[ \t]*export\s+(?=(?:async\s+)?function\b|class\b|const\b|let\b)/gm, '');
+  if (/^[ \t]*(?:import|export)\s/m.test(source)) {
+    throw new Error(`Unsupported module declaration in ${name}`);
+  }
+  compiledModules.push(`__modules[${JSON.stringify(name)}] = (() => {\n${source}\nreturn { ${exports.join(', ')} };\n})();`);
+  visiting.delete(name);
+  completed.add(name);
 }
+await compileModule('app.js');
+const bundledScript = `'use strict';\n(() => {\nconst __modules = Object.create(null);\n${compiledModules.join('\n')}\n})();`;
 if (/<\/style\b/i.test(styles)) {
   throw new Error('Unexpected HTML style terminator in CSS.');
 }

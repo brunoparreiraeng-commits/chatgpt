@@ -1,6 +1,8 @@
 import { analyzeColumn, InputValidationError } from './analysis.js';
+import { analyzeSection, SectionValidationError } from './section.js';
+import { createInteractionChart } from './chart.js';
 
-const MODEL_VERSION = '1.0.0';
+const MODEL_VERSION = '1.1.0';
 const DEFAULT_INPUT = Object.freeze({
   bxCm: 9,
   byCm: 30,
@@ -14,7 +16,17 @@ const DEFAULT_INPUT = Object.freeze({
   mxKnm: 0,
   myKnm: 0,
   loadFactor: 1,
+  fckMpa: 30,
+  fykMpa: 500,
+  gammaC: 1.4,
+  gammaS: 1.15,
+  esGPa: 200,
+  coverCm: 2.5,
+  barDiameterMm: 10,
+  barsX: 2,
+  barsY: 3,
 });
+const SECTION_RESOLUTION = Object.freeze({ points: 72, mesh: 36 });
 
 const form = document.querySelector('#column-form');
 const results = document.querySelector('#results');
@@ -23,9 +35,20 @@ const formError = document.querySelector('#form-error');
 const formState = document.querySelector('#form-state');
 const exportButton = document.querySelector('#export-button');
 const printButton = document.querySelector('#print-button');
+const sectionStatus = document.querySelector('#section-status');
+const eulerMarkerCheckbox = document.querySelector('#show-euler-marker');
 let currentAnalysis = null;
 let dirty = false;
 let notificationTimer;
+const chart = createInteractionChart(document.querySelector('#interaction-chart'), {
+  onDemandChange: ({ mxKnm, myKnm }) => {
+    const factor = Number(form.elements.namedItem('loadFactor').value);
+    if (!Number.isFinite(factor) || factor <= 0) return;
+    form.elements.namedItem('mxKnm').value = String(Number((mxKnm / factor).toPrecision(12)));
+    form.elements.namedItem('myKnm').value = String(Number((myKnm / factor).toPrecision(12)));
+    if (updateAnalysis()) notify('Momentos atualizados pelo gráfico.');
+  },
+});
 
 function number(value, digits = 2) {
   if (value === null || value === undefined || !Number.isFinite(value)) return '—';
@@ -83,7 +106,7 @@ function displayStatus(result) {
   status.append(prefix, document.createTextNode(description));
 }
 
-function renderGeometry(result) {
+function renderGeometry(result, reinforcedSection) {
   const { input, section } = result;
   metric('metric-section', `${number(input.bxCm, 0)} × ${number(input.byCm, 0)}`, 'cm');
   if (!Number.isInteger(input.bxCm) || !Number.isInteger(input.byCm)) {
@@ -129,6 +152,62 @@ function renderGeometry(result) {
     ? `${number(input.lengthXM, 1)} m livres`
     : `Lx ${number(input.lengthXM, 1)} / Ly ${number(input.lengthYM, 1)} m`);
   document.getElementById('section-diagram').setAttribute('aria-label', `Seção retangular de ${number(input.bxCm, 1)} por ${number(input.byCm, 1)} centímetros, com eixos de flexão x e y`);
+  const barGroup = document.getElementById('section-bars');
+  barGroup.replaceChildren();
+  const drawingScale = 145 / maxDimension;
+  for (const bar of reinforcedSection?.reinforcement?.bars || []) {
+    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('cx', 105 + bar.xCm * drawingScale);
+    dot.setAttribute('cy', 116 - bar.yCm * drawingScale);
+    dot.setAttribute('r', Math.max(1.7, reinforcedSection.input.barDiameterMm / 20 * drawingScale));
+    dot.setAttribute('class', 'reinforcement-bar');
+    const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+    title.textContent = `Barra: x ${number(bar.xCm, 2)} cm; y ${number(bar.yCm, 2)} cm; As ${number(bar.areaCm2, 3)} cm²`;
+    dot.append(title);
+    barGroup.append(dot);
+  }
+}
+
+function renderSection(sectionResult) {
+  const { materials, reinforcement, interaction, demand, input } = sectionResult;
+  setText('reinforcement-area', `${number(reinforcement.areaCm2, 2)} cm²`);
+  setText('reinforcement-count', `${reinforcement.count} barras φ${number(input.barDiameterMm, 0)} mm`);
+  setText('reinforcement-ratio', `${number(reinforcement.ratioPercent, 2)} %`);
+  setText('design-materials', `${number(materials.fcdMpa, 2)} / ${number(materials.fydMpa, 2)} MPa`);
+  setText('concrete-peak', `Pico do concreto: ${number(materials.concretePeakMpa, 2)} MPa`);
+  sectionStatus.className = 'section-status';
+  if (interaction.status === 'axial-out-of-range') {
+    sectionStatus.classList.add('is-warning');
+    sectionStatus.textContent = `N = ${number(interaction.nKn, 2)} kN está fora do intervalo axial deste modelo de seção (${number(interaction.axialRange.minKn, 2)} a ${number(interaction.axialRange.maxKn, 2)} kN). O contorno não é gerado.`;
+  } else if (interaction.status !== 'ok') {
+    sectionStatus.classList.add('is-warning');
+    sectionStatus.textContent = 'O contorno da seção é degenerado ou não pode ser comparado para estes parâmetros. Nenhuma conclusão sobre o pilar é obtida.';
+  } else if (demand.inside === false) {
+    sectionStatus.classList.add('is-critical');
+    sectionStatus.textContent = `N = ${number(interaction.nKn, 2)} kN · ponto de primeira ordem fora do contorno calculado da seção. Esta comparação não é uma verificação global do pilar.`;
+  } else if (demand.inside === true) {
+    sectionStatus.textContent = `N = ${number(interaction.nKn, 2)} kN · ponto de primeira ordem dentro do contorno deste modelo simplificado de seção. Isso não verifica estabilidade global ou adequação para uma obra.`;
+  } else {
+    sectionStatus.classList.add('is-warning');
+    sectionStatus.textContent = `Contorno calculado para N = ${number(interaction.nKn, 2)} kN. A posição da demanda não foi comparada.`;
+  }
+}
+
+function renderChart(analysis = currentAnalysis) {
+  if (!analysis) {
+    chart.render(null);
+    eulerMarkerCheckbox.disabled = true;
+    setText('euler-marker-note', 'Atualize a análise para usar o gráfico.');
+    return;
+  }
+  const xMoment = analysis.axes.x.amplifiedMomentKnm;
+  const yMoment = analysis.axes.y.amplifiedMomentKnm;
+  const eulerDefined = Number.isFinite(xMoment) && xMoment !== null && Number.isFinite(yMoment) && yMoment !== null;
+  eulerMarkerCheckbox.disabled = !eulerDefined;
+  setText('euler-marker-note', eulerDefined ? 'Hipótese ideal; não é análise global de segunda ordem.' : 'Amplificação de Euler indefinida para esta carga.');
+  chart.render(analysis.reinforcedSection, {
+    eulerDemand: eulerDefined && eulerMarkerCheckbox.checked ? { mxKnm: xMoment, myKnm: yMoment } : null,
+  });
 }
 
 function renderAxes(result) {
@@ -172,12 +251,17 @@ function renderStress(result) {
   });
 }
 
-function renderNotes(result) {
+function renderNotes(result, sectionResult) {
   const notes = document.getElementById('model-notes');
   notes.replaceChildren();
   for (const note of result.notes || []) {
     const element = document.createElement('li');
-    element.textContent = typeof note === 'string' ? note : String(note.message || note);
+    element.textContent = `Módulo elástico: ${typeof note === 'string' ? note : String(note.message || note)}`;
+    notes.append(element);
+  }
+  for (const note of sectionResult.notes || []) {
+    const element = document.createElement('li');
+    element.textContent = `Modelo da seção: ${typeof note === 'string' ? note : String(note.message || note)}`;
     notes.append(element);
   }
 }
@@ -192,21 +276,46 @@ function setClean() {
 }
 
 function updateAnalysis() {
-  if (!form.reportValidity()) return false;
+  if (!form.reportValidity()) {
+    dirty = true;
+    results.setAttribute('data-stale', 'true');
+    formState.classList.add('is-dirty');
+    formState.textContent = 'Corrija as entradas inválidas e atualize a análise.';
+    status.className = 'analysis-status is-warning';
+    status.textContent = 'Análise não atualizada: existem entradas inválidas. Os números anteriores não representam este formulário.';
+    sectionStatus.className = 'section-status is-warning';
+    sectionStatus.textContent = 'Corrija as entradas para gerar um novo contorno.';
+    renderChart(null);
+    exportButton.disabled = true;
+    printButton.disabled = true;
+    return false;
+  }
   results.setAttribute('aria-busy', 'true');
   formError.hidden = true;
   try {
-    const analysis = analyzeColumn(readInput());
-    renderGeometry(analysis);
+    const input = readInput();
+    const analysis = analyzeColumn(input);
+    const reinforcedSection = analyzeSection({
+      bxCm: input.bxCm, byCm: input.byCm,
+      fckMpa: input.fckMpa, fykMpa: input.fykMpa,
+      gammaC: input.gammaC, gammaS: input.gammaS,
+      esGPa: input.esGPa, coverCm: input.coverCm,
+      barDiameterMm: input.barDiameterMm,
+      barsX: input.barsX, barsY: input.barsY,
+      ...analysis.loads, ...SECTION_RESOLUTION,
+    });
+    renderGeometry(analysis, reinforcedSection);
     renderAxes(analysis);
     renderStress(analysis);
-    renderNotes(analysis);
+    renderSection(reinforcedSection);
+    renderNotes(analysis, reinforcedSection);
     displayStatus(analysis);
-    currentAnalysis = analysis;
+    currentAnalysis = { ...analysis, input: { ...input }, reinforcedSection };
+    renderChart();
     setClean();
     return true;
   } catch (error) {
-    const message = error instanceof InputValidationError
+    const message = error instanceof InputValidationError || error instanceof SectionValidationError
       ? error.message
       : 'Não foi possível concluir a análise. Revise as entradas e tente novamente.';
     formError.textContent = message;
@@ -214,6 +323,11 @@ function updateAnalysis() {
     results.setAttribute('data-stale', 'true');
     status.className = 'analysis-status is-error';
     status.textContent = `Análise não atualizada. ${message}`;
+    sectionStatus.className = 'section-status is-warning';
+    sectionStatus.textContent = 'Dados inválidos: o contorno foi removido. Revise materiais e configuração das barras.';
+    renderChart(null);
+    for (const id of ['reinforcement-area', 'reinforcement-count', 'reinforcement-ratio', 'design-materials', 'concrete-peak']) setText(id, '—');
+    document.getElementById('section-bars').replaceChildren();
     exportButton.disabled = true;
     printButton.disabled = true;
     return false;
@@ -242,12 +356,28 @@ form.addEventListener('input', () => {
   results.setAttribute('data-stale', 'true');
   status.className = 'analysis-status is-warning';
   status.textContent = 'Resultados desatualizados: os números abaixo pertencem ao último cenário calculado. Atualize a análise para usar as entradas atuais.';
+  sectionStatus.className = 'section-status is-warning';
+  sectionStatus.textContent = 'Entradas alteradas. Atualize a análise para recalcular o contorno e os esforços.';
+  renderChart(null);
 });
 
 document.getElementById('reset-button').addEventListener('click', () => {
   for (const [key, value] of Object.entries(DEFAULT_INPUT)) form.elements.namedItem(key).value = String(value);
   updateAnalysis();
   notify('Cenário restaurado: 9 × 30 cm e 6 m livres, sem esforços informados.');
+});
+
+document.getElementById('example-button').addEventListener('click', () => {
+  const example = { ...DEFAULT_INPUT, bxCm: 40, byCm: 40, lengthXM: 8, lengthYM: 8, coverCm: 5, barDiameterMm: 20, barsX: 4, barsY: 4, nKn: 3000 };
+  for (const [key, value] of Object.entries(example)) form.elements.namedItem(key).value = String(value);
+  eulerMarkerCheckbox.checked = false;
+  updateAnalysis();
+  chart.resetView();
+  notify('Exemplo de demonstração carregado: 40 × 40 cm, 12 barras φ20 e N = 3.000 kN.');
+});
+
+eulerMarkerCheckbox.addEventListener('change', () => {
+  if (!dirty) renderChart();
 });
 
 exportButton.addEventListener('click', () => {
@@ -258,11 +388,18 @@ exportButton.addEventListener('click', () => {
     version: MODEL_VERSION,
     generatedAt: new Date().toISOString(),
     model: {
-      label: 'Modelo experimental de barra elástica ideal',
+      label: 'Modelo experimental de seção de concreto armado e barra elástica ideal',
       normativeVerification: false,
       dimensionalGammaNApplied: false,
-      interpretation: 'Força crítica teórica de Euler; não representa carga admissível, capacidade resistente ou dimensionamento de obra.',
-      limitations: ['fissuração', 'fluência', 'armadura', 'imperfeições', 'capacidade resistente', 'conexões', 'interação com a estrutura', 'verificações normativas'],
+      interpretation: 'O contorno representa a seção simplificada para N fixo. Euler representa estabilidade de uma barra ideal. Nenhum dos resultados constitui dimensionamento completo ou adequação para uma obra.',
+      sectionAssumptions: {
+        concrete: 'Parábola–retângulo; pico 0,85 fck/γc; concreto tracionado desprezado.',
+        steel: 'Barras periféricas, comportamento elastoplástico e tensão limite fyk/γs.',
+        coverDefinition: 'Distância da face ao centro das barras; não representa cobrimento nominal.',
+        discretization: SECTION_RESOLUTION,
+        demands: 'N, Mx e My após multiplicador de ações; curva comparada com primeira ordem.',
+      },
+      limitations: ['fluência', 'imperfeições', 'detalhamento de armaduras', 'estribos', 'conexões', 'análise global não linear', 'interação com a estrutura', 'verificações normativas'],
     },
     inputs: currentAnalysis.input,
     results: currentAnalysis,
@@ -289,6 +426,7 @@ printButton.addEventListener('click', () => {
 window.addEventListener('beforeprint', () => {
   if (dirty) updateAnalysis();
   document.querySelector('.method-panel details').open = true;
+  document.querySelectorAll('.input-details').forEach((element) => { element.open = true; });
 });
 
 updateAnalysis();

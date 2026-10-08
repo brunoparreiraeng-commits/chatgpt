@@ -164,7 +164,7 @@ export function analyzeColumn(suppliedInput) {
     'Euler descreve uma barra ideal. O fator de rigidez é uma hipótese fornecida, sem previsão de fissuração, fluência ou armadura.',
     'A amplificação 1/(1 − N/Ncr) é uma aproximação demonstrativa para N < Ncr; não representa uma análise completa de segunda ordem.',
     'As tensões são de primeira ordem, com os esforços multiplicados pelo fator informado. Compressão é positiva; tração é negativa.',
-    'Não há verificação de resistência, armadura, detalhamento, estabilidade global ou conformidade com a NBR 6118. Nenhum resultado declara segurança para execução.',
+    'O módulo elástico não verifica resistência, armadura, detalhamento, estabilidade global ou conformidade com a NBR 6118. A curva da seção é calculada em outro módulo; nenhum deles declara segurança para execução.',
   ];
   if (reachedEulerLoad) {
     notes.push('A força normal atingiu ou ultrapassou Ncr em pelo menos um eixo: o modelo ideal perdeu estabilidade. A amplificação fica indefinida nos dois eixos; as tensões exibidas continuam sendo de primeira ordem.');

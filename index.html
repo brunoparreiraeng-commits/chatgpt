@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#163347" />
-    <meta name="description" content="Laboratório experimental de geometria, esbeltez e estabilidade elástica de pilares. Sem verificação normativa ou dimensionamento estrutural." />
+    <meta name="description" content="Laboratório experimental de pilares com materiais, armaduras, curva interativa Mx–My e estabilidade elástica. Sem dimensionamento estrutural completo ou verificação normativa." />
     <title>Pilar · Laboratório elástico</title>
     <link rel="stylesheet" href="/src/styles.css" />
     <script type="module" src="/src/app.js"></script>
@@ -21,11 +21,11 @@
     <main id="inicio" class="page-shell">
       <section class="intro" aria-labelledby="page-title">
         <div>
-          <p class="eyebrow">Geometria, esforços e estabilidade</p>
+          <p class="eyebrow">Seção, materiais e estabilidade</p>
           <h1 id="page-title">Entenda o comportamento<br class="desktop-break" /> elástico do seu pilar.</h1>
-          <p class="intro-description">Explore a seção, os comprimentos livres e as hipóteses de apoio. Compare esbeltez, força crítica teórica de Euler e tensões de primeira ordem.</p>
+          <p class="intro-description">Defina concreto e armaduras, explore a curva interativa M<sub>x</sub>–M<sub>y</sub> e compare os esforços com o contorno da seção. A estabilidade elástica do pilar é apresentada separadamente.</p>
         </div>
-        <div class="intro-meta"><span class="meta-label">Cenário inicial</span><strong>9 × 30 cm</strong><span>6 m livres, sem travamento lateral</span><span class="version-label">Modelo elástico v1.0</span></div>
+        <div class="intro-meta"><span class="meta-label">Cenário inicial</span><strong>9 × 30 cm</strong><span>6 m livres, sem travamento lateral</span><span class="version-label">Seção + Euler · v1.1</span></div>
       </section>
 
       <aside class="scope-banner" aria-label="Escopo do modelo">
@@ -49,7 +49,32 @@
             </fieldset>
 
             <fieldset>
-              <legend><span class="step-number">2</span> Hipóteses de apoio e rigidez</legend>
+              <legend><span class="step-number">2</span> Materiais da seção</legend>
+              <div class="field-grid">
+                <label class="field" for="fckMpa"><span>Concreto fck</span><span class="input-wrap"><input id="fckMpa" name="fckMpa" type="number" value="30" min="20" max="50" step="any" required /><span class="unit">MPa</span></span></label>
+                <label class="field" for="fykMpa"><span>Aço fyk</span><span class="input-wrap"><input id="fykMpa" name="fykMpa" type="number" value="500" min="200" max="600" step="any" required /><span class="unit">MPa</span></span></label>
+              </div>
+              <p class="field-help">Faixas deste modelo: concreto de 20 a 50 MPa e aço de 200 a 600 MPa. Esses parâmetros alimentam a curva da seção; não estimam E do modelo de Euler.</p>
+              <details class="input-details"><summary>Coeficientes e módulo do aço</summary><div class="field-grid">
+                <label class="field" for="gammaC"><span>Coeficiente γc</span><span class="input-wrap"><input id="gammaC" name="gammaC" type="number" value="1.4" min="1" max="3" step="any" required /><span class="unit">×</span></span></label>
+                <label class="field" for="gammaS"><span>Coeficiente γs</span><span class="input-wrap"><input id="gammaS" name="gammaS" type="number" value="1.15" min="1" max="3" step="any" required /><span class="unit">×</span></span></label>
+                <label class="field" for="esGPa"><span>Módulo do aço Es</span><span class="input-wrap"><input id="esGPa" name="esGPa" type="number" value="200" min="150" max="250" step="any" required /><span class="unit">GPa</span></span></label>
+              </div><p class="field-help">fcd = fck/γc; fyd = fyk/γs. A tensão de pico do concreto é 0,85 fcd no modelo de seção.</p></details>
+            </fieldset>
+
+            <fieldset>
+              <legend><span class="step-number">3</span> Armadura periférica</legend>
+              <div class="field-grid">
+                <label class="field" for="coverCm"><span>Distância face–centro d′</span><span class="input-wrap"><input id="coverCm" name="coverCm" type="number" value="2.5" min="0.01" max="499" step="any" required /><span class="unit">cm</span></span></label>
+                <label class="field" for="barDiameterMm"><span>Diâmetro das barras φ</span><span class="input-wrap"><input id="barDiameterMm" name="barDiameterMm" type="number" value="10" min="1" max="100" step="any" required /><span class="unit">mm</span></span></label>
+                <label class="field" for="barsX"><span>Barras por face em x</span><span class="input-wrap"><input id="barsX" name="barsX" type="number" value="2" min="2" max="30" step="1" required /><span class="unit">un.</span></span></label>
+                <label class="field" for="barsY"><span>Barras por face em y</span><span class="input-wrap"><input id="barsY" name="barsY" type="number" value="3" min="2" max="30" step="1" required /><span class="unit">un.</span></span></label>
+              </div>
+              <p class="field-help">d′ é a distância da face do concreto ao <strong>centro da barra</strong>, não o cobrimento nominal. As barras são distribuídas nas quatro faces, contando cada canto uma vez: 2nx + 2ny − 4. Não há verificação de detalhamento ou estribos.</p>
+            </fieldset>
+
+            <fieldset>
+              <legend><span class="step-number">4</span> Hipóteses de apoio e rigidez</legend>
               <label class="field full-width" for="kX"><span>Fator de comprimento efetivo K<sub>x</sub></span><select id="kX" name="kX"><option value="0.5">0,5 · biengastado ideal</option><option value="0.7">0,7 · engastado/articulado ideal (aprox.)</option><option value="1" selected>1,0 · biarticulado ideal</option><option value="2">2,0 · balanço ideal</option></select></label>
               <label class="field full-width" for="kY"><span>Fator de comprimento efetivo K<sub>y</sub></span><select id="kY" name="kY"><option value="0.5">0,5 · biengastado ideal</option><option value="0.7">0,7 · engastado/articulado ideal (aprox.)</option><option value="1" selected>1,0 · biarticulado ideal</option><option value="2">2,0 · balanço ideal</option></select></label>
               <p class="field-help">K = 1 é a hipótese inicial. K ≈ 0,7 representa o caso engastado/articulado ideal sem deslocamento lateral. Os vínculos reais e a estabilidade da estrutura precisam ser determinados à parte.</p>
@@ -61,7 +86,7 @@
             </fieldset>
 
             <fieldset>
-              <legend><span class="step-number">3</span> Esforços aplicados</legend>
+              <legend><span class="step-number">5</span> Esforços aplicados</legend>
               <div class="field-grid">
                 <label class="field" for="nKn"><span>Força normal N</span><span class="input-wrap"><input id="nKn" name="nKn" type="number" value="0" min="0" max="10000000" step="any" required /><span class="unit">kN</span></span></label>
                 <label class="field" for="loadFactor"><span>Multiplicador de ações</span><span class="input-wrap"><input id="loadFactor" name="loadFactor" type="number" value="1" min="0.001" max="1000" step="any" required /><span class="unit">×</span></span></label>
@@ -71,6 +96,8 @@
               <p class="field-help">N positivo representa compressão. Os momentos admitem sinais positivos e negativos. O multiplicador atua em N, M<sub>x</sub> e M<sub>y</sub>; ele é independente de γn.</p>
             </fieldset>
             <div class="form-actions"><button class="button button-primary" type="submit">Atualizar análise <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4 14 14 4M5 4h9v9" /></svg></button><button class="button button-subtle" type="button" id="reset-button" title="Restaurar os valores iniciais">Restaurar</button></div>
+            <button class="example-button" type="button" id="example-button">Carregar exemplo 40 × 40 (imagem)</button>
+            <p class="example-note">Demonstração com 12 barras φ20, d′ = 5 cm e N = 3.000 kN. Não representa equivalência validada com o PCalc.</p>
             <p id="form-error" class="form-error" role="alert" hidden></p>
             <p id="form-state" class="form-state">Os resultados refletem os valores enviados para análise.</p>
           </form>
@@ -87,11 +114,20 @@
             <article class="metric-card critical-metric"><span class="metric-label">Menor N<sub>cr</sub> de Euler</span><strong id="metric-ncr">— <small>kN</small></strong><span id="metric-ncr-axis" class="metric-detail">Força crítica teórica</span></article>
           </div>
 
+          <article class="panel interaction-panel" aria-labelledby="interaction-title">
+            <div class="panel-heading compact"><div><h3 id="interaction-title">Curva interativa M<sub>x</sub>–M<sub>y</sub></h3><p>Contorno da seção para a força normal informada</p></div><span class="quiet-chip">Concreto + aço</span></div>
+            <div class="section-metrics"><div><span>Armadura As</span><strong id="reinforcement-area">—</strong><small id="reinforcement-count">—</small></div><div><span>Taxa As / A</span><strong id="reinforcement-ratio">—</strong><small>Geometria informada</small></div><div><span>fcd / fyd</span><strong id="design-materials">—</strong><small id="concrete-peak">—</small></div></div>
+            <div id="section-status" class="section-status" role="status" aria-live="polite"></div>
+            <div id="interaction-chart" class="interaction-chart" aria-label="Gráfico interativo de momentos Mx e My"></div>
+            <div class="chart-options"><label for="show-euler-marker"><input id="show-euler-marker" type="checkbox" /> Mostrar ponto com amplificação ideal de Euler</label><span id="euler-marker-note">Modelo elástico separado</span></div>
+            <p class="panel-footnote"><strong>Curva da seção, sem verificação global do pilar.</strong> Compatibilidade de deformações com integração por fibras: concreto parábola–retângulo e aço elastoplástico. Estar dentro do contorno não demonstra adequação para uma obra.</p>
+          </article>
+
           <article class="panel geometry-panel" aria-labelledby="geometry-title">
             <div class="panel-heading compact"><div><h3 id="geometry-title">Geometria e propriedades</h3><p>Seção retangular bruta e eixo de flexão</p></div><span class="quiet-chip">A × I × r</span></div>
             <div class="geometry-layout">
               <div class="geometry-figures">
-                <figure class="section-figure"><svg id="section-diagram" viewBox="0 0 210 225" role="img" aria-label="Seção transversal retangular com eixos x e y"><defs><marker id="axis-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#678492" /></marker></defs><rect id="section-shape" x="83" y="43" width="44" height="147" rx="2" class="section-shape" /><line x1="43" y1="116" x2="167" y2="116" class="diagram-axis" marker-end="url(#axis-arrow)" /><line x1="105" y1="205" x2="105" y2="20" class="diagram-axis" marker-end="url(#axis-arrow)" /><text x="175" y="120" class="axis-label">x</text><text x="110" y="22" class="axis-label">y</text><line id="dimension-bx" x1="83" y1="203" x2="127" y2="203" class="diagram-dimension" /><line id="dimension-bx-start" x1="83" y1="198" x2="83" y2="208" class="diagram-dimension" /><line id="dimension-bx-end" x1="127" y1="198" x2="127" y2="208" class="diagram-dimension" /><text id="diagram-bx" x="105" y="220" text-anchor="middle" class="dimension-label">9 cm</text><line id="dimension-by" x1="65" y1="43" x2="65" y2="190" class="diagram-dimension" /><line id="dimension-by-start" x1="60" y1="43" x2="70" y2="43" class="diagram-dimension" /><line id="dimension-by-end" x1="60" y1="190" x2="70" y2="190" class="diagram-dimension" /><text id="diagram-by" x="51" y="116" text-anchor="middle" transform="rotate(-90 51 116)" class="dimension-label">30 cm</text></svg><figcaption>Seção transversal</figcaption></figure>
+                <figure class="section-figure"><svg id="section-diagram" viewBox="0 0 210 225" role="img" aria-label="Seção transversal retangular com eixos x e y"><defs><marker id="axis-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#678492" /></marker></defs><rect id="section-shape" x="83" y="43" width="44" height="147" rx="2" class="section-shape" /><g id="section-bars" aria-label="Posições das barras de armadura"></g><line x1="43" y1="116" x2="167" y2="116" class="diagram-axis" marker-end="url(#axis-arrow)" /><line x1="105" y1="205" x2="105" y2="20" class="diagram-axis" marker-end="url(#axis-arrow)" /><text x="175" y="120" class="axis-label">x</text><text x="110" y="22" class="axis-label">y</text><line id="dimension-bx" x1="83" y1="203" x2="127" y2="203" class="diagram-dimension" /><line id="dimension-bx-start" x1="83" y1="198" x2="83" y2="208" class="diagram-dimension" /><line id="dimension-bx-end" x1="127" y1="198" x2="127" y2="208" class="diagram-dimension" /><text id="diagram-bx" x="105" y="220" text-anchor="middle" class="dimension-label">9 cm</text><line id="dimension-by" x1="65" y1="43" x2="65" y2="190" class="diagram-dimension" /><line id="dimension-by-start" x1="60" y1="43" x2="70" y2="43" class="diagram-dimension" /><line id="dimension-by-end" x1="60" y1="190" x2="70" y2="190" class="diagram-dimension" /><text id="diagram-by" x="51" y="116" text-anchor="middle" transform="rotate(-90 51 116)" class="dimension-label">30 cm</text></svg><figcaption>Seção transversal</figcaption></figure>
                 <figure class="column-figure"><svg viewBox="0 0 150 225" role="img" aria-label="Esquema de um pilar sem travamento lateral intermediário"><path d="M70 30h23v155H70z" class="column-shape" /><path d="M93 30l9-6v155l-9 6z" class="column-face" /><path d="M70 30l9-6h23l-9 6z" class="column-top" /><path d="M59 30h-9v155h9M45 30h10M45 185h10" class="diagram-dimension" /><path d="M62 30H118M62 185H118" class="diagram-guide" /><text id="diagram-length" x="37" y="108" text-anchor="middle" transform="rotate(-90 37 108)" class="dimension-label">6 m livres</text></svg><figcaption>Trecho livre, sem apoio intermediário</figcaption></figure>
               </div>
               <dl class="geometry-values"><div><dt>Área A</dt><dd id="area-value">—</dd></div><div><dt>Inércia I<sub>x</sub></dt><dd id="ix-value">—</dd></div><div><dt>Inércia I<sub>y</sub></dt><dd id="iy-value">—</dd></div><div><dt>Raio r<sub>x</sub> / r<sub>y</sub></dt><dd id="radius-value">—</dd></div><div><dt>Módulo W<sub>x</sub> / W<sub>y</sub></dt><dd id="section-modulus-value">—</dd></div><div><dt>Rigidez informada</dt><dd id="rigidity-value">—</dd></div></dl>
@@ -110,16 +146,16 @@
             <div class="applied-loads" aria-label="Esforços após multiplicador"><span>N <strong id="applied-n">—</strong></span><span>M<sub>x</sub> <strong id="applied-mx">—</strong></span><span>M<sub>y</sub> <strong id="applied-my">—</strong></span></div>
             <div class="stress-summary"><div><span>Tensão mínima</span><strong id="stress-min">—</strong></div><div><span>Tensão máxima</span><strong id="stress-max">—</strong></div></div>
             <div class="table-scroll"><table class="result-table corner-table"><thead><tr><th scope="col">Canto (x, y)</th><th scope="col">Tensão σ</th></tr></thead><tbody id="stress-corners"></tbody></table></div>
-            <p id="stress-note" class="panel-footnote">Tensões calculadas com os esforços de primeira ordem, sem usar os momentos amplificados. Valores negativos indicam tração; nenhuma resistência do concreto ou da armadura é verificada.</p>
+            <p id="stress-note" class="panel-footnote">Tensões calculadas com os esforços de primeira ordem, sem usar os momentos amplificados. Valores negativos indicam tração. Estes valores de seção bruta não usam a armadura e não verificam resistência; a curva M<sub>x</sub>–M<sub>y</sub> é calculada em um modelo separado.</p>
           </article>
 
           <article class="panel method-panel" aria-labelledby="method-title">
-            <details open><summary id="method-title"><span>Premissas e limites do laboratório</span><span class="details-icon" aria-hidden="true">+</span></summary><div class="method-content"><div class="formula-grid"><div><span>Esbeltez</span><strong>λ = K · L / r</strong></div><div><span>Euler</span><strong>N<sub>cr</sub> = π² · E · I · α / (K · L)²</strong></div><div><span>Tensão de primeira ordem</span><strong>σ = N/A + M<sub>x</sub> · y/I<sub>x</sub> + M<sub>y</sub> · x/I<sub>y</sub></strong></div></div><p>α é a fração de rigidez EI informada e atua apenas na análise de Euler e na amplificação. As tensões usam a geometria bruta. Este modelo representa uma barra ideal com seção retangular e propriedades constantes. A geometria, os apoios, E, α e os esforços são hipóteses de entrada.</p><ul id="model-notes" class="model-notes"></ul><p class="model-limit"><strong>Fora do modelo:</strong> fissuração, fluência, armaduras, imperfeições, capacidade resistente, conexões, interação com a estrutura e verificações normativas. Não usar os resultados como dimensionamento para execução de uma obra.</p></div></details>
+            <details open><summary id="method-title"><span>Premissas e limites do laboratório</span><span class="details-icon" aria-hidden="true">+</span></summary><div class="method-content"><div class="formula-grid"><div><span>Esbeltez</span><strong>λ = K · L / r</strong></div><div><span>Euler</span><strong>N<sub>cr</sub> = π² · E · I · α / (K · L)²</strong></div><div><span>Tensão elástica de primeira ordem</span><strong>σ = N/A + M<sub>x</sub> · y/I<sub>x</sub> + M<sub>y</sub> · x/I<sub>y</sub></strong></div><div><span>Materiais da seção</span><strong>fcd = fck/γc · fyd = fyk/γs</strong></div><div><span>Integração de fibras e barras</span><strong>N = ∫ σ dA · M<sub>x</sub> = ∫ σ · y dA · M<sub>y</sub> = ∫ σ · x dA</strong></div></div><p>Os módulos são separados: o modelo de Euler usa E e a fração α informados; a seção usa fck, fyk, Es e as posições das barras. A fração α atua apenas em Euler e na amplificação, sem alterar a curva resistente simplificada da seção. As tensões elásticas de primeira ordem usam a geometria bruta.</p><ul id="model-notes" class="model-notes"></ul><p class="model-limit"><strong>Fora do modelo:</strong> fluência, imperfeições, detalhamento de armaduras/estribos, ligações, interação com a estrutura, análise global não linear e verificações normativas. O concreto tracionado é desprezado na curva da seção; não há análise da evolução de fissuras. Não usar os resultados como dimensionamento para execução de uma obra.</p></div></details>
           </article>
         </section>
       </div>
 
-      <footer class="site-footer"><span><strong>Pilar.</strong> Laboratório elástico · v1.0</span><span>Resultados experimentais · Sem verificação normativa</span></footer>
+      <footer class="site-footer"><span><strong>Pilar.</strong> Laboratório elástico · v1.1</span><span>Seção simplificada + Euler · Sem verificação normativa</span></footer>
     </main>
     <div id="notification" class="notification" role="status" aria-live="polite" hidden></div>
   </body>

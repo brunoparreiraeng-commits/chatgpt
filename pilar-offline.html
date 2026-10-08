@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#163347" />
-    <meta name="description" content="Laboratório experimental de geometria, esbeltez e estabilidade elástica de pilares. Sem verificação normativa ou dimensionamento estrutural." />
+    <meta name="description" content="Laboratório experimental de pilares com materiais, armaduras, curva interativa Mx–My e estabilidade elástica. Sem dimensionamento estrutural completo ou verificação normativa." />
     <title>Pilar · Laboratório elástico</title>
     <style>
 :root {
@@ -91,6 +91,14 @@ select { width: 100%; color: var(--navy); padding: 11px 29px 11px 11px; font-siz
 .button-primary svg { width: 17px; height: 17px; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
 .button-subtle { background: white; color: #667d8d; border-color: var(--line); }
 .button-subtle:hover { background: #f4f7f8; }
+.example-button { display: block; width: calc(100% - 46px); margin: 12px 23px 0; padding: 9px 12px; border: 1px dashed #b9d4d2; border-radius: 7px; background: #f6faf9; color: #3d7a79; font-size: 10px; text-align: center; }
+.example-button:hover { background: #ebf5f3; border-color: #80b4b0; }
+.example-note { font-size: 9px; color: #8598a3; margin: 7px 23px 0; line-height: 1.65; }
+.input-details { margin-top: 13px; }
+.input-details > summary { padding: 9px 0 2px; color: #527d81; font-size: 10px; font-weight: 550; }
+.input-details > summary::after { content: '+'; color: #83a7aa; font-size: 15px; font-weight: 400; }
+.input-details[open] > summary::after { content: '−'; }
+.input-details > .field-grid { margin-top: 13px; }
 .form-error { margin: 14px 23px 0; padding: 11px 13px; border-radius: 6px; background: #fff0ef; color: #b0443c; font-size: 11px; }
 .form-state { font-size: 10px; color: #7c8e99; margin: 12px 23px 21px; line-height: 1.6; }
 .form-state.is-dirty { color: var(--amber); }
@@ -114,6 +122,31 @@ select { width: 100%; color: var(--navy); padding: 11px 29px 11px 11px; font-siz
 .metric-card strong { margin-top: 8px; font-size: clamp(20px, 2.2vw, 27px); line-height: 1.1; font-weight: 650; letter-spacing: -.7px; white-space: nowrap; }
 .metric-card strong small { font-size: 12px; font-weight: 500; letter-spacing: 0; margin-left: 2px; }
 .metric-detail { font-size: 10px; color: #83949e; margin-top: 8px; }
+.section-metrics { display: grid; grid-template-columns: 1fr .85fr 1.55fr; gap: 18px; padding: 17px 21px 15px; border-bottom: 1px solid #edf1f3; }
+.section-metrics > div { min-width: 0; }
+.section-metrics span { display: block; font-size: 10px; color: #78909d; }
+.section-metrics strong { display: block; margin-top: 4px; font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -.3px; }
+.section-metrics #design-materials { font-size: 14px; padding-top: 5px; padding-bottom: 3px; }
+.section-metrics small { display: block; margin-top: 3px; font-size: 9px; color: #90a1ab; }
+.section-status { font-size: 10px; color: #497e7c; background: #f0f8f6; border-left: 2px solid #96c7bd; padding: 10px 13px; margin: 15px 21px 0; border-radius: 0 5px 5px 0; line-height: 1.65; }
+.section-status.is-warning { background: #fff9ed; color: #92702d; border-color: #dfc389; }
+.section-status.is-critical { background: #fff2ef; color: #a55345; border-color: #d99788; }
+#interaction-chart { padding: 7px 12px 0; }
+.chart-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 9px 1px; }
+.chart-instructions { margin: 0; max-width: 460px; color: #8598a3; font-size: 9px; line-height: 1.7; }
+.chart-reset-view { flex-shrink: 0; font-size: 9px; padding: 7px 9px; }
+.chart-canvas { user-select: none; }
+.chart-svg { cursor: crosshair; }
+.chart-tooltip { z-index: 2; max-width: min(315px, calc(100% - 12px)); background: #183649; color: #fff; padding: 9px 11px; border-radius: 6px; box-shadow: 0 4px 14px #18364920; font-size: 10px; line-height: 1.65; }
+.chart-legend { display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap; padding: 0 5px; }
+.chart-legend-item { display: inline-flex; align-items: center; gap: 5px; color: #6b8290; font-size: 9px; }
+.chart-legend-item svg { flex-shrink: 0; }
+.chart-state { color: #688896; margin: 11px 9px 10px; font-size: 10px; font-variant-numeric: tabular-nums; text-align: center; }
+.chart-options { padding: 11px 21px 15px; display: flex; align-items: flex-start; justify-content: space-between; gap: 15px; border-top: 1px solid #edf1f3; margin-top: 4px; }
+.chart-options label { display: flex; align-items: center; gap: 7px; color: #607e8d; font-size: 9px; cursor: pointer; }
+.chart-options input { margin: 0; accent-color: var(--teal); width: 12px; height: 12px; flex-shrink: 0; }
+.chart-options span { text-align: right; max-width: 220px; color: #95a4ac; font-size: 9px; }
+.reinforcement-bar { fill: #456478; stroke: white; stroke-width: .7; }
 .critical-metric { background: var(--navy); color: #fff; border-color: var(--navy); }
 .critical-metric .metric-label { color: #bed0da; }
 .critical-metric .metric-detail { color: #97b8c7; }
@@ -174,6 +207,7 @@ details[open] .details-icon { transform: rotate(45deg); }
 .formula-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; margin-bottom: 18px; }
 .formula-grid > div { padding: 11px 12px; border-radius: 6px; background: #f5f8f9; min-width: 0; }
 .formula-grid > div:last-child { grid-column: 1 / -1; }
+.formula-grid > div:nth-child(3) { grid-column: 1 / -1; }
 .formula-grid span { display: block; font-size: 9px; color: #7c929e; margin-bottom: 4px; }
 .formula-grid strong { display: block; font-weight: 550; font-size: 11px; color: #456c7b; }
 .method-content p, .model-notes { margin: 12px 0 0; color: #83939e; font-size: 10px; line-height: 1.8; }
@@ -208,11 +242,12 @@ details[open] .details-icon { transform: rotate(45deg); }
   .intro-meta { flex-basis: 200px; }
   h1 { font-size: 32px; }
   .input-panel form { display: grid; grid-template-columns: 1fr 1fr; }
-  .input-panel form fieldset:nth-child(1) { grid-column: 1; border-right: 1px solid var(--line); }
-  .input-panel form fieldset:nth-child(2) { grid-column: 2; grid-row: span 2; }
-  .input-panel form fieldset:nth-child(3) { grid-column: 1; border-right: 1px solid var(--line); }
+  .input-panel form fieldset { grid-column: auto; grid-row: auto; }
+  .input-panel form fieldset:nth-child(odd) { border-right: 1px solid var(--line); }
+  .input-panel form fieldset:last-of-type { grid-column: 1 / -1; border-right: 0; }
   .form-actions { grid-column: 1 / -1; padding-top: 18px; }
   .form-state, .form-error { grid-column: 1 / -1; }
+  .example-button, .example-note { grid-column: 1 / -1; }
   .results-heading h2 { font-size: 19px; }
   .icon-button { padding: 8px 11px; }
   .icon-button span { display: inline; }
@@ -245,7 +280,7 @@ details[open] .details-icon { transform: rotate(45deg); }
   .scope-banner p { font-size: 10px; }
   .scope-banner strong { font-size: 11px; }
   .input-panel form { display: block; }
-  .input-panel form fieldset:nth-child(1), .input-panel form fieldset:nth-child(3) { border-right: 0; }
+  .input-panel form fieldset:nth-child(odd) { border-right: 0; }
   .panel-heading { padding: 20px 19px 18px; }
   fieldset { padding: 20px 19px; }
   .field { font-size: 11px; }
@@ -254,6 +289,8 @@ details[open] .details-icon { transform: rotate(45deg); }
   select { font-size: 12px; padding-top: 12px; padding-bottom: 12px; }
   .form-actions { padding-left: 19px; padding-right: 19px; }
   .form-state, .form-error { margin-left: 19px; margin-right: 19px; }
+  .example-button { margin-left: 19px; margin-right: 19px; width: calc(100% - 38px); }
+  .example-note { margin-left: 19px; margin-right: 19px; }
   .results-column { gap: 15px; }
   .results-heading h2 { font-size: 17px; }
   .icon-button { padding: 8px; }
@@ -265,6 +302,21 @@ details[open] .details-icon { transform: rotate(45deg); }
   .metric-card strong small { font-size: 9px; margin-left: 0; }
   .metric-detail { font-size: 8px; }
   .analysis-status { font-size: 10px; }
+  .section-metrics { padding: 15px 17px; gap: 12px; grid-template-columns: 1fr .8fr 1.3fr; }
+  .section-metrics span { font-size: 9px; }
+  .section-metrics strong { font-size: 15px; }
+  .section-metrics #design-materials { font-size: 11px; padding-top: 3px; }
+  .section-metrics small { font-size: 8px; }
+  .section-status { font-size: 9px; margin: 13px 17px 0; }
+  #interaction-chart { padding: 5px 5px 0; }
+  .chart-controls { gap: 7px; padding: 8px 10px 2px; }
+  .chart-instructions { font-size: 8px; }
+  .chart-reset-view { font-size: 8px; padding: 6px; }
+  .chart-legend { gap: 6px 10px; }
+  .chart-legend-item { font-size: 8px; }
+  .chart-state { font-size: 9px; padding: 0 6px; }
+  .chart-options { padding: 11px 17px 13px; display: block; }
+  .chart-options span { display: block; text-align: left; margin: 5px 0 0 19px; max-width: none; font-size: 8px; }
   .panel-heading.compact { padding: 16px 17px 13px; }
   h3 { font-size: 13px; }
   .quiet-chip { font-size: 8px; }
@@ -330,7 +382,14 @@ details[open] .details-icon { transform: rotate(45deg); }
   .panel-heading.compact { padding: 13px 17px; }
   .result-table th, .result-table td { padding: 8px 17px; }
   .site-footer { margin-top: 15px; padding: 12px 0; }
-  .result-tools, .form-actions, .form-state, .editable-tag, .notification { display: none !important; }
+  .result-tools, .form-actions, .form-state, .editable-tag, .notification, .example-button, .example-note, .chart-controls, .chart-tooltip { display: none !important; }
+  .chart-options { display: none !important; }
+  #interaction-chart { padding-top: 10px; }
+  .input-details { margin-top: 6px; }
+  .input-details > summary { font-size: 8px; padding-top: 3px; }
+  .input-details > .field-grid { margin-top: 8px; }
+  .section-metrics { padding: 13px 17px; }
+  .section-metrics strong { font-size: 15px; }
   .results-column[data-stale="true"] .metric-grid, .results-column[data-stale="true"] .panel { display: none !important; }
   .model-notes, .method-content p { color: #546d7a; }
   @page { size: A4; margin: 14mm; }
@@ -350,11 +409,11 @@ details[open] .details-icon { transform: rotate(45deg); }
     <main id="inicio" class="page-shell">
       <section class="intro" aria-labelledby="page-title">
         <div>
-          <p class="eyebrow">Geometria, esforços e estabilidade</p>
+          <p class="eyebrow">Seção, materiais e estabilidade</p>
           <h1 id="page-title">Entenda o comportamento<br class="desktop-break" /> elástico do seu pilar.</h1>
-          <p class="intro-description">Explore a seção, os comprimentos livres e as hipóteses de apoio. Compare esbeltez, força crítica teórica de Euler e tensões de primeira ordem.</p>
+          <p class="intro-description">Defina concreto e armaduras, explore a curva interativa M<sub>x</sub>–M<sub>y</sub> e compare os esforços com o contorno da seção. A estabilidade elástica do pilar é apresentada separadamente.</p>
         </div>
-        <div class="intro-meta"><span class="meta-label">Cenário inicial</span><strong>9 × 30 cm</strong><span>6 m livres, sem travamento lateral</span><span class="version-label">Modelo elástico v1.0</span></div>
+        <div class="intro-meta"><span class="meta-label">Cenário inicial</span><strong>9 × 30 cm</strong><span>6 m livres, sem travamento lateral</span><span class="version-label">Seção + Euler · v1.1</span></div>
       </section>
 
       <aside class="scope-banner" aria-label="Escopo do modelo">
@@ -378,7 +437,32 @@ details[open] .details-icon { transform: rotate(45deg); }
             </fieldset>
 
             <fieldset>
-              <legend><span class="step-number">2</span> Hipóteses de apoio e rigidez</legend>
+              <legend><span class="step-number">2</span> Materiais da seção</legend>
+              <div class="field-grid">
+                <label class="field" for="fckMpa"><span>Concreto fck</span><span class="input-wrap"><input id="fckMpa" name="fckMpa" type="number" value="30" min="20" max="50" step="any" required /><span class="unit">MPa</span></span></label>
+                <label class="field" for="fykMpa"><span>Aço fyk</span><span class="input-wrap"><input id="fykMpa" name="fykMpa" type="number" value="500" min="200" max="600" step="any" required /><span class="unit">MPa</span></span></label>
+              </div>
+              <p class="field-help">Faixas deste modelo: concreto de 20 a 50 MPa e aço de 200 a 600 MPa. Esses parâmetros alimentam a curva da seção; não estimam E do modelo de Euler.</p>
+              <details class="input-details"><summary>Coeficientes e módulo do aço</summary><div class="field-grid">
+                <label class="field" for="gammaC"><span>Coeficiente γc</span><span class="input-wrap"><input id="gammaC" name="gammaC" type="number" value="1.4" min="1" max="3" step="any" required /><span class="unit">×</span></span></label>
+                <label class="field" for="gammaS"><span>Coeficiente γs</span><span class="input-wrap"><input id="gammaS" name="gammaS" type="number" value="1.15" min="1" max="3" step="any" required /><span class="unit">×</span></span></label>
+                <label class="field" for="esGPa"><span>Módulo do aço Es</span><span class="input-wrap"><input id="esGPa" name="esGPa" type="number" value="200" min="150" max="250" step="any" required /><span class="unit">GPa</span></span></label>
+              </div><p class="field-help">fcd = fck/γc; fyd = fyk/γs. A tensão de pico do concreto é 0,85 fcd no modelo de seção.</p></details>
+            </fieldset>
+
+            <fieldset>
+              <legend><span class="step-number">3</span> Armadura periférica</legend>
+              <div class="field-grid">
+                <label class="field" for="coverCm"><span>Distância face–centro d′</span><span class="input-wrap"><input id="coverCm" name="coverCm" type="number" value="2.5" min="0.01" max="499" step="any" required /><span class="unit">cm</span></span></label>
+                <label class="field" for="barDiameterMm"><span>Diâmetro das barras φ</span><span class="input-wrap"><input id="barDiameterMm" name="barDiameterMm" type="number" value="10" min="1" max="100" step="any" required /><span class="unit">mm</span></span></label>
+                <label class="field" for="barsX"><span>Barras por face em x</span><span class="input-wrap"><input id="barsX" name="barsX" type="number" value="2" min="2" max="30" step="1" required /><span class="unit">un.</span></span></label>
+                <label class="field" for="barsY"><span>Barras por face em y</span><span class="input-wrap"><input id="barsY" name="barsY" type="number" value="3" min="2" max="30" step="1" required /><span class="unit">un.</span></span></label>
+              </div>
+              <p class="field-help">d′ é a distância da face do concreto ao <strong>centro da barra</strong>, não o cobrimento nominal. As barras são distribuídas nas quatro faces, contando cada canto uma vez: 2nx + 2ny − 4. Não há verificação de detalhamento ou estribos.</p>
+            </fieldset>
+
+            <fieldset>
+              <legend><span class="step-number">4</span> Hipóteses de apoio e rigidez</legend>
               <label class="field full-width" for="kX"><span>Fator de comprimento efetivo K<sub>x</sub></span><select id="kX" name="kX"><option value="0.5">0,5 · biengastado ideal</option><option value="0.7">0,7 · engastado/articulado ideal (aprox.)</option><option value="1" selected>1,0 · biarticulado ideal</option><option value="2">2,0 · balanço ideal</option></select></label>
               <label class="field full-width" for="kY"><span>Fator de comprimento efetivo K<sub>y</sub></span><select id="kY" name="kY"><option value="0.5">0,5 · biengastado ideal</option><option value="0.7">0,7 · engastado/articulado ideal (aprox.)</option><option value="1" selected>1,0 · biarticulado ideal</option><option value="2">2,0 · balanço ideal</option></select></label>
               <p class="field-help">K = 1 é a hipótese inicial. K ≈ 0,7 representa o caso engastado/articulado ideal sem deslocamento lateral. Os vínculos reais e a estabilidade da estrutura precisam ser determinados à parte.</p>
@@ -390,7 +474,7 @@ details[open] .details-icon { transform: rotate(45deg); }
             </fieldset>
 
             <fieldset>
-              <legend><span class="step-number">3</span> Esforços aplicados</legend>
+              <legend><span class="step-number">5</span> Esforços aplicados</legend>
               <div class="field-grid">
                 <label class="field" for="nKn"><span>Força normal N</span><span class="input-wrap"><input id="nKn" name="nKn" type="number" value="0" min="0" max="10000000" step="any" required /><span class="unit">kN</span></span></label>
                 <label class="field" for="loadFactor"><span>Multiplicador de ações</span><span class="input-wrap"><input id="loadFactor" name="loadFactor" type="number" value="1" min="0.001" max="1000" step="any" required /><span class="unit">×</span></span></label>
@@ -400,6 +484,8 @@ details[open] .details-icon { transform: rotate(45deg); }
               <p class="field-help">N positivo representa compressão. Os momentos admitem sinais positivos e negativos. O multiplicador atua em N, M<sub>x</sub> e M<sub>y</sub>; ele é independente de γn.</p>
             </fieldset>
             <div class="form-actions"><button class="button button-primary" type="submit">Atualizar análise <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M4 14 14 4M5 4h9v9" /></svg></button><button class="button button-subtle" type="button" id="reset-button" title="Restaurar os valores iniciais">Restaurar</button></div>
+            <button class="example-button" type="button" id="example-button">Carregar exemplo 40 × 40 (imagem)</button>
+            <p class="example-note">Demonstração com 12 barras φ20, d′ = 5 cm e N = 3.000 kN. Não representa equivalência validada com o PCalc.</p>
             <p id="form-error" class="form-error" role="alert" hidden></p>
             <p id="form-state" class="form-state">Os resultados refletem os valores enviados para análise.</p>
           </form>
@@ -416,11 +502,20 @@ details[open] .details-icon { transform: rotate(45deg); }
             <article class="metric-card critical-metric"><span class="metric-label">Menor N<sub>cr</sub> de Euler</span><strong id="metric-ncr">— <small>kN</small></strong><span id="metric-ncr-axis" class="metric-detail">Força crítica teórica</span></article>
           </div>
 
+          <article class="panel interaction-panel" aria-labelledby="interaction-title">
+            <div class="panel-heading compact"><div><h3 id="interaction-title">Curva interativa M<sub>x</sub>–M<sub>y</sub></h3><p>Contorno da seção para a força normal informada</p></div><span class="quiet-chip">Concreto + aço</span></div>
+            <div class="section-metrics"><div><span>Armadura As</span><strong id="reinforcement-area">—</strong><small id="reinforcement-count">—</small></div><div><span>Taxa As / A</span><strong id="reinforcement-ratio">—</strong><small>Geometria informada</small></div><div><span>fcd / fyd</span><strong id="design-materials">—</strong><small id="concrete-peak">—</small></div></div>
+            <div id="section-status" class="section-status" role="status" aria-live="polite"></div>
+            <div id="interaction-chart" class="interaction-chart" aria-label="Gráfico interativo de momentos Mx e My"></div>
+            <div class="chart-options"><label for="show-euler-marker"><input id="show-euler-marker" type="checkbox" /> Mostrar ponto com amplificação ideal de Euler</label><span id="euler-marker-note">Modelo elástico separado</span></div>
+            <p class="panel-footnote"><strong>Curva da seção, sem verificação global do pilar.</strong> Compatibilidade de deformações com integração por fibras: concreto parábola–retângulo e aço elastoplástico. Estar dentro do contorno não demonstra adequação para uma obra.</p>
+          </article>
+
           <article class="panel geometry-panel" aria-labelledby="geometry-title">
             <div class="panel-heading compact"><div><h3 id="geometry-title">Geometria e propriedades</h3><p>Seção retangular bruta e eixo de flexão</p></div><span class="quiet-chip">A × I × r</span></div>
             <div class="geometry-layout">
               <div class="geometry-figures">
-                <figure class="section-figure"><svg id="section-diagram" viewBox="0 0 210 225" role="img" aria-label="Seção transversal retangular com eixos x e y"><defs><marker id="axis-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#678492" /></marker></defs><rect id="section-shape" x="83" y="43" width="44" height="147" rx="2" class="section-shape" /><line x1="43" y1="116" x2="167" y2="116" class="diagram-axis" marker-end="url(#axis-arrow)" /><line x1="105" y1="205" x2="105" y2="20" class="diagram-axis" marker-end="url(#axis-arrow)" /><text x="175" y="120" class="axis-label">x</text><text x="110" y="22" class="axis-label">y</text><line id="dimension-bx" x1="83" y1="203" x2="127" y2="203" class="diagram-dimension" /><line id="dimension-bx-start" x1="83" y1="198" x2="83" y2="208" class="diagram-dimension" /><line id="dimension-bx-end" x1="127" y1="198" x2="127" y2="208" class="diagram-dimension" /><text id="diagram-bx" x="105" y="220" text-anchor="middle" class="dimension-label">9 cm</text><line id="dimension-by" x1="65" y1="43" x2="65" y2="190" class="diagram-dimension" /><line id="dimension-by-start" x1="60" y1="43" x2="70" y2="43" class="diagram-dimension" /><line id="dimension-by-end" x1="60" y1="190" x2="70" y2="190" class="diagram-dimension" /><text id="diagram-by" x="51" y="116" text-anchor="middle" transform="rotate(-90 51 116)" class="dimension-label">30 cm</text></svg><figcaption>Seção transversal</figcaption></figure>
+                <figure class="section-figure"><svg id="section-diagram" viewBox="0 0 210 225" role="img" aria-label="Seção transversal retangular com eixos x e y"><defs><marker id="axis-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#678492" /></marker></defs><rect id="section-shape" x="83" y="43" width="44" height="147" rx="2" class="section-shape" /><g id="section-bars" aria-label="Posições das barras de armadura"></g><line x1="43" y1="116" x2="167" y2="116" class="diagram-axis" marker-end="url(#axis-arrow)" /><line x1="105" y1="205" x2="105" y2="20" class="diagram-axis" marker-end="url(#axis-arrow)" /><text x="175" y="120" class="axis-label">x</text><text x="110" y="22" class="axis-label">y</text><line id="dimension-bx" x1="83" y1="203" x2="127" y2="203" class="diagram-dimension" /><line id="dimension-bx-start" x1="83" y1="198" x2="83" y2="208" class="diagram-dimension" /><line id="dimension-bx-end" x1="127" y1="198" x2="127" y2="208" class="diagram-dimension" /><text id="diagram-bx" x="105" y="220" text-anchor="middle" class="dimension-label">9 cm</text><line id="dimension-by" x1="65" y1="43" x2="65" y2="190" class="diagram-dimension" /><line id="dimension-by-start" x1="60" y1="43" x2="70" y2="43" class="diagram-dimension" /><line id="dimension-by-end" x1="60" y1="190" x2="70" y2="190" class="diagram-dimension" /><text id="diagram-by" x="51" y="116" text-anchor="middle" transform="rotate(-90 51 116)" class="dimension-label">30 cm</text></svg><figcaption>Seção transversal</figcaption></figure>
                 <figure class="column-figure"><svg viewBox="0 0 150 225" role="img" aria-label="Esquema de um pilar sem travamento lateral intermediário"><path d="M70 30h23v155H70z" class="column-shape" /><path d="M93 30l9-6v155l-9 6z" class="column-face" /><path d="M70 30l9-6h23l-9 6z" class="column-top" /><path d="M59 30h-9v155h9M45 30h10M45 185h10" class="diagram-dimension" /><path d="M62 30H118M62 185H118" class="diagram-guide" /><text id="diagram-length" x="37" y="108" text-anchor="middle" transform="rotate(-90 37 108)" class="dimension-label">6 m livres</text></svg><figcaption>Trecho livre, sem apoio intermediário</figcaption></figure>
               </div>
               <dl class="geometry-values"><div><dt>Área A</dt><dd id="area-value">—</dd></div><div><dt>Inércia I<sub>x</sub></dt><dd id="ix-value">—</dd></div><div><dt>Inércia I<sub>y</sub></dt><dd id="iy-value">—</dd></div><div><dt>Raio r<sub>x</sub> / r<sub>y</sub></dt><dd id="radius-value">—</dd></div><div><dt>Módulo W<sub>x</sub> / W<sub>y</sub></dt><dd id="section-modulus-value">—</dd></div><div><dt>Rigidez informada</dt><dd id="rigidity-value">—</dd></div></dl>
@@ -439,21 +534,23 @@ details[open] .details-icon { transform: rotate(45deg); }
             <div class="applied-loads" aria-label="Esforços após multiplicador"><span>N <strong id="applied-n">—</strong></span><span>M<sub>x</sub> <strong id="applied-mx">—</strong></span><span>M<sub>y</sub> <strong id="applied-my">—</strong></span></div>
             <div class="stress-summary"><div><span>Tensão mínima</span><strong id="stress-min">—</strong></div><div><span>Tensão máxima</span><strong id="stress-max">—</strong></div></div>
             <div class="table-scroll"><table class="result-table corner-table"><thead><tr><th scope="col">Canto (x, y)</th><th scope="col">Tensão σ</th></tr></thead><tbody id="stress-corners"></tbody></table></div>
-            <p id="stress-note" class="panel-footnote">Tensões calculadas com os esforços de primeira ordem, sem usar os momentos amplificados. Valores negativos indicam tração; nenhuma resistência do concreto ou da armadura é verificada.</p>
+            <p id="stress-note" class="panel-footnote">Tensões calculadas com os esforços de primeira ordem, sem usar os momentos amplificados. Valores negativos indicam tração. Estes valores de seção bruta não usam a armadura e não verificam resistência; a curva M<sub>x</sub>–M<sub>y</sub> é calculada em um modelo separado.</p>
           </article>
 
           <article class="panel method-panel" aria-labelledby="method-title">
-            <details open><summary id="method-title"><span>Premissas e limites do laboratório</span><span class="details-icon" aria-hidden="true">+</span></summary><div class="method-content"><div class="formula-grid"><div><span>Esbeltez</span><strong>λ = K · L / r</strong></div><div><span>Euler</span><strong>N<sub>cr</sub> = π² · E · I · α / (K · L)²</strong></div><div><span>Tensão de primeira ordem</span><strong>σ = N/A + M<sub>x</sub> · y/I<sub>x</sub> + M<sub>y</sub> · x/I<sub>y</sub></strong></div></div><p>α é a fração de rigidez EI informada e atua apenas na análise de Euler e na amplificação. As tensões usam a geometria bruta. Este modelo representa uma barra ideal com seção retangular e propriedades constantes. A geometria, os apoios, E, α e os esforços são hipóteses de entrada.</p><ul id="model-notes" class="model-notes"></ul><p class="model-limit"><strong>Fora do modelo:</strong> fissuração, fluência, armaduras, imperfeições, capacidade resistente, conexões, interação com a estrutura e verificações normativas. Não usar os resultados como dimensionamento para execução de uma obra.</p></div></details>
+            <details open><summary id="method-title"><span>Premissas e limites do laboratório</span><span class="details-icon" aria-hidden="true">+</span></summary><div class="method-content"><div class="formula-grid"><div><span>Esbeltez</span><strong>λ = K · L / r</strong></div><div><span>Euler</span><strong>N<sub>cr</sub> = π² · E · I · α / (K · L)²</strong></div><div><span>Tensão elástica de primeira ordem</span><strong>σ = N/A + M<sub>x</sub> · y/I<sub>x</sub> + M<sub>y</sub> · x/I<sub>y</sub></strong></div><div><span>Materiais da seção</span><strong>fcd = fck/γc · fyd = fyk/γs</strong></div><div><span>Integração de fibras e barras</span><strong>N = ∫ σ dA · M<sub>x</sub> = ∫ σ · y dA · M<sub>y</sub> = ∫ σ · x dA</strong></div></div><p>Os módulos são separados: o modelo de Euler usa E e a fração α informados; a seção usa fck, fyk, Es e as posições das barras. A fração α atua apenas em Euler e na amplificação, sem alterar a curva resistente simplificada da seção. As tensões elásticas de primeira ordem usam a geometria bruta.</p><ul id="model-notes" class="model-notes"></ul><p class="model-limit"><strong>Fora do modelo:</strong> fluência, imperfeições, detalhamento de armaduras/estribos, ligações, interação com a estrutura, análise global não linear e verificações normativas. O concreto tracionado é desprezado na curva da seção; não há análise da evolução de fissuras. Não usar os resultados como dimensionamento para execução de uma obra.</p></div></details>
           </article>
         </section>
       </div>
 
-      <footer class="site-footer"><span><strong>Pilar.</strong> Laboratório elástico · v1.0</span><span>Resultados experimentais · Sem verificação normativa</span></footer>
+      <footer class="site-footer"><span><strong>Pilar.</strong> Laboratório elástico · v1.1</span><span>Seção simplificada + Euler · Sem verificação normativa</span></footer>
     </main>
     <div id="notification" class="notification" role="status" aria-live="polite" hidden></div>
       <script>
 'use strict';
 (() => {
+const __modules = Object.create(null);
+__modules["analysis.js"] = (() => {
 /**
  * Experimental, linear elastic model of a prismatic rectangular column.
  * Compression is positive. x and y are the section's centroidal axes:
@@ -620,7 +717,7 @@ function analyzeColumn(suppliedInput) {
     'Euler descreve uma barra ideal. O fator de rigidez é uma hipótese fornecida, sem previsão de fissuração, fluência ou armadura.',
     'A amplificação 1/(1 − N/Ncr) é uma aproximação demonstrativa para N < Ncr; não representa uma análise completa de segunda ordem.',
     'As tensões são de primeira ordem, com os esforços multiplicados pelo fator informado. Compressão é positiva; tração é negativa.',
-    'Não há verificação de resistência, armadura, detalhamento, estabilidade global ou conformidade com a NBR 6118. Nenhum resultado declara segurança para execução.',
+    'O módulo elástico não verifica resistência, armadura, detalhamento, estabilidade global ou conformidade com a NBR 6118. A curva da seção é calculada em outro módulo; nenhum deles declara segurança para execução.',
   ];
   if (reachedEulerLoad) {
     notes.push('A força normal atingiu ou ultrapassou Ncr em pelo menos um eixo: o modelo ideal perdeu estabilidade. A amplificação fica indefinida nos dois eixos; as tensões exibidas continuam sendo de primeira ordem.');
@@ -632,8 +729,716 @@ function analyzeColumn(suppliedInput) {
   return { input, section, loads, axes, stress, notes };
 }
 
+return { InputValidationError, analyzeColumn };
+})();
+__modules["section.js"] = (() => {
+/**
+ * Illustrative rectangular reinforced-concrete section model.
+ * Plane sections, a parabolic-rectangular concrete law and bilinear steel are
+ * integrated by midpoint fibers. This is not a column-design or code check.
+ * Positive N and stress mean compression; Mx = integral(sigma * y dA),
+ * My = integral(sigma * x dA). Lengths below are in cm, stresses in MPa.
+ */
 
-const MODEL_VERSION = '1.0.0';
+const EPSILON_C2 = 0.002;
+const EPSILON_CU = 0.0035;
+const EPSILON_SU = 0.01;
+const FIELDS = [
+  'bxCm', 'byCm', 'fckMpa', 'fykMpa', 'gammaC', 'gammaS', 'esGPa',
+  'coverCm', 'barDiameterMm', 'barsX', 'barsY', 'nKn', 'mxKnm', 'myKnm',
+  'points', 'mesh',
+];
+const RANGES = {
+  fckMpa: [20, 50], fykMpa: [200, 600], gammaC: [1, 3], gammaS: [1, 3],
+  esGPa: [150, 250], barsX: [2, 30], barsY: [2, 30],
+  points: [36, 180], mesh: [20, 80],
+};
+const INTEGER_FIELDS = new Set(['barsX', 'barsY', 'points', 'mesh']);
+
+class SectionValidationError extends Error {
+  constructor(issues) {
+    super(issues.map(({ message }) => message).join(' '));
+    this.name = 'SectionValidationError';
+    this.issues = issues;
+  }
+}
+
+function fail(field, message) {
+  throw new SectionValidationError([{ field, message }]);
+}
+
+function finiteCalculated(values, positive = false) {
+  if (values.some((value) => !Number.isFinite(value) || (positive && value <= 0))) {
+    fail('input', 'Os valores excedem a faixa numérica do modelo de seção. Revise unidades e magnitudes.');
+  }
+}
+
+function prepareSection(suppliedInput) {
+  if (suppliedInput === null || typeof suppliedInput !== 'object' || Array.isArray(suppliedInput)) {
+    fail('input', 'Informe os dados da seção em um objeto.');
+  }
+  const issues = [];
+  for (const field of FIELDS) {
+    const value = suppliedInput[field];
+    if (typeof value !== 'number' || !Number.isFinite(value)) {
+      issues.push({ field, message: `${field}: informe um número finito.` });
+      continue;
+    }
+    if (INTEGER_FIELDS.has(field) && !Number.isInteger(value)) {
+      issues.push({ field, message: `${field}: informe um número inteiro.` });
+    }
+    if (RANGES[field]) {
+      const [min, max] = RANGES[field];
+      if (value < min || value > max) {
+        issues.push({ field, message: `${field}: o modelo aceita valores entre ${min} e ${max}.` });
+      }
+    } else if (field === 'nKn') {
+      if (value < 0) issues.push({ field, message: 'nKn: informe zero ou compressão positiva.' });
+    } else if (field !== 'mxKnm' && field !== 'myKnm' && value <= 0) {
+      issues.push({ field, message: `${field}: o valor deve ser maior que zero.` });
+    }
+  }
+  if (issues.length) throw new SectionValidationError(issues);
+  const input = Object.fromEntries(FIELDS.map((field) => [field, suppliedInput[field]]));
+  const radiusCm = input.barDiameterMm / 20;
+  const barAreaCm2 = Math.PI * radiusCm ** 2;
+  const grossAreaCm2 = input.bxCm * input.byCm;
+  finiteCalculated([radiusCm, barAreaCm2, grossAreaCm2], true);
+  finiteCalculated([Math.hypot(input.bxCm, input.byCm), Math.hypot(input.mxKnm, input.myKnm)]);
+  if (input.coverCm < radiusCm) {
+    fail('coverCm', 'A distância face–centro deve ser pelo menos o raio da barra para mantê-la dentro da seção.');
+  }
+  if (input.coverCm >= Math.min(input.bxCm, input.byCm) / 2) {
+    fail('coverCm', 'A distância face–centro deve ser menor que metade de ambas as dimensões.');
+  }
+
+  const halfX = input.bxCm / 2 - input.coverCm;
+  const halfY = input.byCm / 2 - input.coverCm;
+  const bars = [];
+  for (let i = 0; i < input.barsX; i += 1) {
+    const xCm = -halfX + 2 * halfX * i / (input.barsX - 1);
+    bars.push({ xCm, yCm: -halfY, areaCm2: barAreaCm2 });
+    bars.push({ xCm, yCm: halfY, areaCm2: barAreaCm2 });
+  }
+  for (let j = 1; j < input.barsY - 1; j += 1) {
+    const yCm = -halfY + 2 * halfY * j / (input.barsY - 1);
+    bars.push({ xCm: -halfX, yCm, areaCm2: barAreaCm2 });
+    bars.push({ xCm: halfX, yCm, areaCm2: barAreaCm2 });
+  }
+  const diameterCm = radiusCm * 2;
+  for (let i = 0; i < bars.length; i += 1) {
+    for (let j = i + 1; j < bars.length; j += 1) {
+      const spacing = Math.hypot(bars[i].xCm - bars[j].xCm, bars[i].yCm - bars[j].yCm);
+      if (spacing < diameterCm * (1 - 1e-12)) {
+        fail('reinforcement', 'As barras se sobrepõem. Revise diâmetro, quantidade, dimensões e distância face–centro.');
+      }
+    }
+  }
+  const totalSteelAreaCm2 = barAreaCm2 * bars.length;
+  if (totalSteelAreaCm2 >= grossAreaCm2) {
+    fail('reinforcement', 'A área de aço deve ser menor que a área bruta da seção.');
+  }
+  const materials = {
+    fcdMpa: input.fckMpa / input.gammaC,
+    fydMpa: input.fykMpa / input.gammaS,
+    concretePeakMpa: 0.85 * input.fckMpa / input.gammaC,
+    esMpa: input.esGPa * 1000,
+    epsilonC2: EPSILON_C2,
+    epsilonCu: EPSILON_CU,
+    epsilonSu: EPSILON_SU,
+  };
+  const reinforcement = {
+    bars,
+    count: bars.length,
+    areaCm2: totalSteelAreaCm2,
+    ratioPercent: 100 * totalSteelAreaCm2 / grossAreaCm2,
+  };
+  const maxCompressionKn = 0.1 * (
+    (grossAreaCm2 - totalSteelAreaCm2) * materials.concretePeakMpa
+    + totalSteelAreaCm2 * steelStress(EPSILON_C2, materials.esMpa, materials.fydMpa)
+  );
+  const minCompressionKn = -0.1 * totalSteelAreaCm2 * materials.fydMpa;
+  finiteCalculated([maxCompressionKn, totalSteelAreaCm2, reinforcement.ratioPercent], true);
+  finiteCalculated([minCompressionKn]);
+  return {
+    input, materials, reinforcement, grossAreaCm2,
+    axial: { maxCompressionKn, minCompressionKn },
+  };
+}
+
+/** Concrete has no tensile resistance; the section model limits strain to 0.0035. */
+function concreteStress(epsilon, peakMpa) {
+  if (epsilon <= 0) return 0;
+  if (epsilon >= EPSILON_C2) return peakMpa;
+  const ratio = epsilon / EPSILON_C2;
+  return peakMpa * ratio * (2 - ratio);
+}
+
+function steelStress(epsilon, esMpa, fydMpa) {
+  return Math.max(-fydMpa, Math.min(fydMpa, esMpa * epsilon));
+}
+
+/** Analytic reference for a uniform strain, with concrete displaced by the bars. */
+function evaluateUniformSection(input, epsilon) {
+  if (!Number.isFinite(epsilon) || epsilon < -EPSILON_SU || epsilon > EPSILON_CU) {
+    fail('epsilon', 'A deformação uniforme deve estar entre −0,01 e 0,0035.');
+  }
+  const section = prepareSection(input);
+  const { materials, reinforcement, grossAreaCm2 } = section;
+  const nKn = 0.1 * (
+    (grossAreaCm2 - reinforcement.areaCm2) * concreteStress(epsilon, materials.concretePeakMpa)
+    + reinforcement.areaCm2 * steelStress(epsilon, materials.esMpa, materials.fydMpa)
+  );
+  finiteCalculated([nKn]);
+  return { nKn, mxKnm: 0, myKnm: 0 };
+}
+
+function createFibers(input) {
+  const count = input.mesh ** 2;
+  const x = new Float64Array(count);
+  const y = new Float64Array(count);
+  let index = 0;
+  for (let i = 0; i < input.mesh; i += 1) {
+    for (let j = 0; j < input.mesh; j += 1) {
+      x[index] = input.bxCm * ((i + 0.5) / input.mesh - 0.5);
+      y[index] = input.byCm * ((j + 0.5) / input.mesh - 0.5);
+      index += 1;
+    }
+  }
+  return { x, y, areaCm2: input.bxCm * input.byCm / count };
+}
+
+function calculateContourPoint(section, fibers, angleRad) {
+  const { input, materials, reinforcement } = section;
+  const nx = Math.cos(angleRad);
+  const ny = Math.sin(angleRad);
+  const cornerProjectionCm = Math.abs(nx) * input.bxCm / 2 + Math.abs(ny) * input.byCm / 2;
+  const depthCm = cornerProjectionCm * 2;
+  const fiberDepths = new Float64Array(fibers.x.length);
+  for (let i = 0; i < fiberDepths.length; i += 1) {
+    fiberDepths[i] = cornerProjectionCm - nx * fibers.x[i] - ny * fibers.y[i];
+  }
+  const barDepths = new Float64Array(reinforcement.count);
+  let deepestBarCm = 0;
+  for (let i = 0; i < reinforcement.count; i += 1) {
+    const bar = reinforcement.bars[i];
+    barDepths[i] = cornerProjectionCm - nx * bar.xCm - ny * bar.yCm;
+    deepestBarCm = Math.max(deepestBarCm, barDepths[i]);
+  }
+
+  function integrate(c, withMoments = false) {
+    // For partially compressed sections, limit the extreme concrete corner
+    // and the most tensile bar. For a fully compressed rectangle, rotate the
+    // strain plane about epsilonC2 at d = (1 - epsilonC2/epsilonCu) * depth;
+    // this approaches uniform epsilonC2 as c -> infinity, continuously at c=D.
+    let topStrain;
+    if (c >= depthCm) {
+      topStrain = EPSILON_C2 / (1 - (1 - EPSILON_C2 / EPSILON_CU) * depthCm / c);
+    } else {
+      topStrain = c < deepestBarCm
+        ? Math.min(EPSILON_CU, EPSILON_SU * c / (deepestBarCm - c))
+        : EPSILON_CU;
+    }
+    const gradient = topStrain / c;
+    let normal = 0;
+    let momentX = 0;
+    let momentY = 0;
+    for (let i = 0; i < fiberDepths.length; i += 1) {
+      const sigma = concreteStress(topStrain - gradient * fiberDepths[i], materials.concretePeakMpa);
+      const force = sigma * fibers.areaCm2;
+      normal += force;
+      if (withMoments) {
+        momentX += force * fibers.y[i];
+        momentY += force * fibers.x[i];
+      }
+    }
+    for (let i = 0; i < barDepths.length; i += 1) {
+      const bar = reinforcement.bars[i];
+      const epsilon = topStrain - gradient * barDepths[i];
+      const stressDifference = steelStress(epsilon, materials.esMpa, materials.fydMpa)
+        - concreteStress(epsilon, materials.concretePeakMpa);
+      const force = stressDifference * bar.areaCm2;
+      normal += force;
+      if (withMoments) {
+        momentX += force * bar.yCm;
+        momentY += force * bar.xCm;
+      }
+    }
+    return { nKn: normal * 0.1, mxKnm: momentX * 0.001, myKnm: momentY * 0.001 };
+  }
+
+  let low = depthCm * 1e-10;
+  let high = depthCm;
+  let lowForce = integrate(low).nKn;
+  let highForce = integrate(high).nKn;
+  const forceTolerance = Math.max(1e-7, section.axial.maxCompressionKn * 1e-9);
+  // The target is nonnegative. The low boundary is a predominantly tensile
+  // section; the high boundary approaches uniform compression as c -> infinity.
+  if (lowForce > input.nKn + forceTolerance) {
+    fail('input', 'Não foi possível delimitar a raiz de equilíbrio da seção. Revise a geometria de armaduras.');
+  }
+  let bracketSteps = 0;
+  while (highForce < input.nKn && bracketSteps < 80) {
+    high *= 2;
+    highForce = integrate(high).nKn;
+    bracketSteps += 1;
+  }
+  if (!Number.isFinite(highForce) || highForce < input.nKn - forceTolerance) {
+    fail('input', 'Não foi possível obter equilíbrio axial na faixa numérica do modelo.');
+  }
+  let c = (low + high) / 2;
+  for (let step = 0; step < 90; step += 1) {
+    c = (low + high) / 2;
+    const force = integrate(c).nKn;
+    if (Math.abs(force - input.nKn) <= forceTolerance) break;
+    if (force < input.nKn) {
+      low = c;
+      lowForce = force;
+    } else {
+      high = c;
+    }
+  }
+  const result = integrate(c, true);
+  const residualKn = result.nKn - input.nKn;
+  finiteCalculated([result.mxKnm, result.myKnm, c, residualKn]);
+  if (Math.abs(residualKn) > forceTolerance * 2) {
+    fail('input', 'O equilíbrio axial não convergiu. Revise as entradas ou a resolução da malha.');
+  }
+  return { mxKnm: result.mxKnm, myKnm: result.myKnm, neutralAxisCm: c, angleRad, residualKn };
+}
+
+function evaluateDemand(input, points) {
+  const result = { mxKnm: input.mxKnm, myKnm: input.myKnm, inside: null, radialFactor: null };
+  if (points.length < 3) return result;
+  const magnitude = Math.hypot(input.mxKnm, input.myKnm);
+  if (magnitude === 0) return { ...result, inside: true };
+  const dx = input.mxKnm / magnitude;
+  const dy = input.myKnm / magnitude;
+  let radialDistance = Infinity;
+  // Intersect the demand ray with actual neighboring contour samples. There is
+  // no ellipse fit; the resolution of the sampled polygon remains an assumption.
+  for (let i = 0; i < points.length; i += 1) {
+    const p = points[i];
+    const q = points[(i + 1) % points.length];
+    const ex = q.mxKnm - p.mxKnm;
+    const ey = q.myKnm - p.myKnm;
+    const denominator = dx * ey - dy * ex;
+    if (denominator === 0) continue;
+    const distance = (p.mxKnm * ey - p.myKnm * ex) / denominator;
+    const position = (p.mxKnm * dy - p.myKnm * dx) / denominator;
+    if (distance >= 0 && position >= -1e-10 && position <= 1 + 1e-10) {
+      radialDistance = Math.min(radialDistance, distance);
+    }
+  }
+  if (!Number.isFinite(radialDistance)) return result;
+  const radialFactor = radialDistance / magnitude;
+  finiteCalculated([radialFactor]);
+  return { ...result, inside: radialFactor >= 1 - 1e-9, radialFactor };
+}
+
+function analyzeSection(suppliedInput) {
+  const section = prepareSection(suppliedInput);
+  const { input, materials, reinforcement, axial } = section;
+  const axialTolerance = Math.max(1e-7, axial.maxCompressionKn * 1e-9);
+  let status = 'ok';
+  let points = [];
+  if (input.nKn > axial.maxCompressionKn + axialTolerance) {
+    status = 'axial-out-of-range';
+  } else if (Math.abs(input.nKn - axial.maxCompressionKn) <= axialTolerance) {
+    status = 'degenerate';
+  } else {
+    const fibers = createFibers(input);
+    for (let i = 0; i < input.points; i += 1) {
+      points.push(calculateContourPoint(section, fibers, 2 * Math.PI * i / input.points));
+    }
+    const maxMoment = Math.max(...points.map(({ mxKnm, myKnm }) => Math.hypot(mxKnm, myKnm)));
+    if (maxMoment < 1e-10) {
+      status = 'degenerate';
+      points = [];
+    }
+  }
+  const interaction = {
+    nKn: input.nKn,
+    points,
+    status,
+    axialRange: { minKn: axial.minCompressionKn, maxKn: axial.maxCompressionKn },
+  };
+  const demand = evaluateDemand(input, points);
+  const notes = [
+    'Seção ilustrativa por compatibilidade de deformações: concreto sem tração, diagrama parábola–retângulo com pico 0,85 fck/γc e aço bilinear com patamar ±fyk/γs.',
+    'A seção é retangular e as barras são simétricas no perímetro. A distância informada é face–centro da barra, não cobrimento nominal.',
+    'A integração usa fibras de ponto médio e desconta o concreto equivalente na posição do centro de cada barra. A curva é amostrada por ângulos de plano de deformações; não é uma elipse ajustada.',
+    'Na compressão parcial, a família de deformações limita o canto comprimido a 0,0035 e a barra mais tracionada a −0,01. Na compressão total, o plano gira pelo ponto de deformação 0,002 a 3/7 da profundidade projetada, até compressão uniforme a 0,002. Os domínios e verificações completos de uma norma não foram implementados.',
+    'A força axial máxima usa compressão uniforme a 0,002 e a mínima usa tração uniforme do aço a −0,01. São limites deste modelo de seção; a curva nesta ferramenta admite apenas força axial não negativa.',
+    'Estar dentro do polígono e o fator radial são relações geométricas desta seção ilustrativa; não são coeficientes de segurança nem autorização para executar uma estrutura.',
+    'Esta análise de seção não verifica flambagem, efeitos de segunda ordem, estabilidade global, fissuração em serviço, detalhamento ou conformidade com a NBR 6118. A análise de Euler é independente e não valida esta curva.',
+  ];
+  if (status === 'axial-out-of-range') {
+    notes.push('A força axial ultrapassa a compressão uniforme máxima deste modelo. Nenhum contorno Mx–My foi gerado.');
+  } else if (status === 'degenerate') {
+    notes.push('A compressão uniforme máxima ou um contorno sem dimensão útil produz um estado degenerado. Nenhum contorno Mx–My utilizável foi gerado.');
+  }
+  if (demand.mxKnm === 0 && demand.myKnm === 0 && status === 'ok') {
+    notes.push('Para demanda de momentos nula, o fator radial não está definido.');
+  }
+  return { input, materials, reinforcement, axial, interaction, demand, notes };
+}
+
+return { SectionValidationError, concreteStress, steelStress, evaluateUniformSection, analyzeSection };
+})();
+__modules["chart.js"] = (() => {
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const PLOT = Object.freeze({ x: 72, y: 28, width: 596, height: 298 });
+const COLORS = Object.freeze({ curve: '#2570b3', inside: '#087f82', outside: '#bd433b', grid: '#e3eaf0', axis: '#8397a5', text: '#526b7d', euler: '#aa7319' });
+const format = (value, digits = 2) => Number.isFinite(value)
+  ? new Intl.NumberFormat('pt-BR', { maximumFractionDigits: digits }).format(Math.abs(value) < 1e-10 ? 0 : value)
+  : '—';
+
+function svgElement(tag, attributes = {}, text) {
+  const element = document.createElementNS(SVG_NS, tag);
+  for (const [name, value] of Object.entries(attributes)) element.setAttribute(name, String(value));
+  if (text !== undefined) element.textContent = text;
+  return element;
+}
+
+function element(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+function validMoment(point) {
+  return point && Number.isFinite(point.mxKnm) && Number.isFinite(point.myKnm);
+}
+
+function tickStep(span) {
+  const raw = span / 5;
+  const exponent = 10 ** Math.floor(Math.log10(raw || 1));
+  const ratio = raw / exponent;
+  return exponent * (ratio <= 1 ? 1 : ratio <= 2 ? 2 : ratio <= 5 ? 5 : 10);
+}
+
+/** Horizontal axis: My; vertical axis: Mx. Moments passed to the callback are
+ * already design demands; the caller owns any conversion to original loads. */
+function createInteractionChart(container, { onDemandChange } = {}) {
+  if (!container || typeof container.replaceChildren !== 'function') {
+    throw new TypeError('O contêiner do gráfico de interação não foi encontrado.');
+  }
+
+  const root = element('div', 'interaction-chart');
+  const controls = element('div', 'chart-controls');
+  const instructions = element('p', 'chart-instructions', 'Clique ou arraste para ajustar os momentos. Use as setas com o gráfico em foco; Shift aumenta o passo. Role para ampliar.');
+  const resetButton = element('button', 'icon-button chart-reset-view', 'Restaurar vista');
+  resetButton.id = 'chart-reset-view';
+  resetButton.type = 'button';
+  resetButton.setAttribute('aria-label', 'Restaurar a escala inicial do gráfico');
+  controls.append(instructions, resetButton);
+  const canvas = element('div', 'chart-canvas');
+  canvas.style.position = 'relative';
+  const svg = svgElement('svg', {
+    viewBox: '0 0 700 400', class: 'chart-svg', tabindex: 0,
+    role: 'img', 'aria-label': 'Diagrama de interação: My no eixo horizontal e Mx no eixo vertical, em quilonewton-metro. Clique ou use as setas para ajustar a demanda.',
+    preserveAspectRatio: 'xMidYMid meet',
+  });
+  svg.style.width = '100%';
+  svg.style.height = 'auto';
+  svg.style.display = 'block';
+  svg.style.touchAction = 'none';
+  const tooltip = element('div', 'chart-tooltip');
+  tooltip.hidden = true;
+  tooltip.setAttribute('role', 'status');
+  tooltip.style.position = 'absolute';
+  tooltip.style.pointerEvents = 'none';
+  const legend = element('div', 'chart-legend');
+  const stateLabel = element('p', 'chart-state');
+  stateLabel.setAttribute('aria-live', 'polite');
+  canvas.append(svg, tooltip);
+  root.append(controls, canvas, legend, stateLabel);
+  container.replaceChildren(root);
+
+  let current = null;
+  let contour = [];
+  let demand = null;
+  let eulerDemand = null;
+  let enabled = false;
+  let baseView = { centerMy: 0, centerMx: 0, unitsPerPixel: 1 };
+  let view = { ...baseView };
+  let zoom = 1;
+  let dragging = null;
+  let preview = null;
+  let lastExtentKey = null;
+  let markerGroup = null;
+  let hoverGroup = null;
+
+  function project(point) {
+    return {
+      x: PLOT.x + PLOT.width / 2 + (point.myKnm - view.centerMy) / view.unitsPerPixel,
+      y: PLOT.y + PLOT.height / 2 - (point.mxKnm - view.centerMx) / view.unitsPerPixel,
+    };
+  }
+
+  function unproject(point) {
+    return {
+      myKnm: view.centerMy + (point.x - PLOT.x - PLOT.width / 2) * view.unitsPerPixel,
+      mxKnm: view.centerMx - (point.y - PLOT.y - PLOT.height / 2) * view.unitsPerPixel,
+    };
+  }
+
+  function pointerPosition(event) {
+    // getScreenCTM also accounts for the viewBox letterboxing and CSS scaling.
+    const matrix = svg.getScreenCTM();
+    if (!matrix) return null;
+    const point = svg.createSVGPoint();
+    point.x = event.clientX;
+    point.y = event.clientY;
+    try { return point.matrixTransform(matrix.inverse()); } catch { return null; }
+  }
+
+  function inPlot(point) {
+    return point && point.x >= PLOT.x && point.x <= PLOT.x + PLOT.width
+      && point.y >= PLOT.y && point.y <= PLOT.y + PLOT.height;
+  }
+
+  function clampToPlot(point) {
+    return { x: Math.min(PLOT.x + PLOT.width, Math.max(PLOT.x, point.x)), y: Math.min(PLOT.y + PLOT.height, Math.max(PLOT.y, point.y)) };
+  }
+
+  function hideHover() {
+    tooltip.hidden = true;
+    hoverGroup?.replaceChildren();
+  }
+
+  function fitView() {
+    const data = [...contour, ...(validMoment(demand) ? [demand] : []), ...(validMoment(eulerDemand) ? [eulerDemand] : [])];
+    let maxMy = 0;
+    let maxMx = 0;
+    for (const point of data) {
+      maxMy = Math.max(maxMy, Math.abs(point.myKnm));
+      maxMx = Math.max(maxMx, Math.abs(point.mxKnm));
+    }
+    const scale = Math.max(maxMy / (PLOT.width / 2), maxMx / (PLOT.height / 2));
+    baseView = { centerMy: 0, centerMx: 0, unitsPerPixel: scale > 0 ? scale * 1.2 : 2 / PLOT.height };
+  }
+
+  function addLegend(text, color, shape = 'line') {
+    const item = element('span', 'chart-legend-item');
+    const sample = svgElement('svg', { width: 22, height: 14, viewBox: '0 0 22 14', 'aria-hidden': 'true' });
+    if (shape === 'diamond') sample.append(svgElement('path', { d: 'M11 2 L16 7 L11 12 L6 7 Z', fill: 'none', stroke: color, 'stroke-width': 2 }));
+    else if (shape === 'point') sample.append(svgElement('circle', { cx: 11, cy: 7, r: 4, fill: color }));
+    else sample.append(svgElement('line', { x1: 2, y1: 7, x2: 20, y2: 7, stroke: color, 'stroke-width': 2.5 }));
+    item.append(sample, document.createTextNode(text));
+    legend.append(item);
+  }
+
+  function drawMarker(group, point, color, kind, titleText) {
+    const position = project(point);
+    if (!inPlot(position)) return;
+    const marker = kind === 'diamond'
+      ? svgElement('path', { d: `M${position.x} ${position.y - 7}L${position.x + 7} ${position.y}L${position.x} ${position.y + 7}L${position.x - 7} ${position.y}Z`, fill: '#ffffff', stroke: color, 'stroke-width': 2.3 })
+      : svgElement('circle', { cx: position.x, cy: position.y, r: 6.5, fill: color, stroke: '#ffffff', 'stroke-width': 2.2 });
+    marker.append(svgElement('title', {}, titleText));
+    group.append(marker);
+  }
+
+  function drawMarkers() {
+    markerGroup?.replaceChildren();
+    if (!markerGroup) return;
+    const activeDemand = preview || demand;
+    if (validMoment(eulerDemand)) drawMarker(markerGroup, eulerDemand, COLORS.euler, 'diamond', `Demanda com amplificação de Euler: Mx ${format(eulerDemand.mxKnm)}; My ${format(eulerDemand.myKnm)} kN·m.`);
+    if (validMoment(activeDemand)) {
+      const color = preview ? COLORS.text : current?.demand?.inside === false ? COLORS.outside : current?.demand?.inside === true ? COLORS.inside : COLORS.text;
+      drawMarker(markerGroup, activeDemand, color, 'circle', `Demanda: Mx ${format(activeDemand.mxKnm)}; My ${format(activeDemand.myKnm)} kN·m.`);
+    }
+  }
+
+  function draw() {
+    hideHover();
+    svg.dataset.zoom = String(zoom);
+    svg.replaceChildren(svgElement('title', {}, 'Diagrama de interação Mx–My para a força normal informada'));
+    const defs = svgElement('defs');
+    const clip = svgElement('clipPath', { id: 'interaction-plot-clip' });
+    clip.append(svgElement('rect', { x: PLOT.x, y: PLOT.y, width: PLOT.width, height: PLOT.height }));
+    defs.append(clip);
+    svg.append(defs, svgElement('rect', { x: PLOT.x, y: PLOT.y, width: PLOT.width, height: PLOT.height, fill: '#fbfdff', stroke: COLORS.grid }));
+    const minMy = view.centerMy - PLOT.width / 2 * view.unitsPerPixel;
+    const maxMy = view.centerMy + PLOT.width / 2 * view.unitsPerPixel;
+    const minMx = view.centerMx - PLOT.height / 2 * view.unitsPerPixel;
+    const maxMx = view.centerMx + PLOT.height / 2 * view.unitsPerPixel;
+    const step = tickStep(Math.max(maxMy - minMy, maxMx - minMx));
+    const decimals = Math.max(0, Math.min(6, -Math.floor(Math.log10(step))));
+    for (let value = Math.ceil(minMy / step) * step, count = 0; value <= maxMy + step * 1e-8 && count < 50; value += step, count++) {
+      const x = project({ myKnm: value, mxKnm: 0 }).x;
+      svg.append(svgElement('line', { x1: x, y1: PLOT.y, x2: x, y2: PLOT.y + PLOT.height, stroke: COLORS.grid }));
+      svg.append(svgElement('text', { x, y: PLOT.y + PLOT.height + 20, 'text-anchor': 'middle', 'font-size': 11, fill: COLORS.text }, format(value, decimals)));
+    }
+    for (let value = Math.ceil(minMx / step) * step, count = 0; value <= maxMx + step * 1e-8 && count < 50; value += step, count++) {
+      const y = project({ myKnm: 0, mxKnm: value }).y;
+      svg.append(svgElement('line', { x1: PLOT.x, y1: y, x2: PLOT.x + PLOT.width, y2: y, stroke: COLORS.grid }));
+      svg.append(svgElement('text', { x: PLOT.x - 10, y: y + 4, 'text-anchor': 'end', 'font-size': 11, fill: COLORS.text }, format(value, decimals)));
+    }
+    const origin = project({ myKnm: 0, mxKnm: 0 });
+    if (origin.x >= PLOT.x && origin.x <= PLOT.x + PLOT.width) svg.append(svgElement('line', { x1: origin.x, y1: PLOT.y, x2: origin.x, y2: PLOT.y + PLOT.height, stroke: COLORS.axis, 'stroke-width': 1.2 }));
+    if (origin.y >= PLOT.y && origin.y <= PLOT.y + PLOT.height) svg.append(svgElement('line', { x1: PLOT.x, y1: origin.y, x2: PLOT.x + PLOT.width, y2: origin.y, stroke: COLORS.axis, 'stroke-width': 1.2 }));
+    svg.append(svgElement('text', { x: PLOT.x + PLOT.width / 2, y: 378, 'text-anchor': 'middle', 'font-size': 13, fill: COLORS.text }, 'My (kN·m)'));
+    svg.append(svgElement('text', { x: 20, y: PLOT.y + PLOT.height / 2, transform: `rotate(-90 20 ${PLOT.y + PLOT.height / 2})`, 'text-anchor': 'middle', 'font-size': 13, fill: COLORS.text }, 'Mx (kN·m)'));
+    if (enabled) {
+      const path = contour.map((point, index) => {
+        const { x, y } = project(point);
+        return `${index ? 'L' : 'M'}${x} ${y}`;
+      }).join(' ') + ' Z';
+      svg.append(svgElement('path', { d: path, class: 'chart-contour', 'clip-path': 'url(#interaction-plot-clip)', fill: '#2570b31a', stroke: COLORS.curve, 'stroke-width': 2.5, 'stroke-linejoin': 'round' }));
+    } else {
+      const message = !current ? 'Informe dados válidos para calcular o contorno.'
+        : current.interaction?.status === 'axial-out-of-range' ? 'Força normal fora do intervalo do modelo.'
+          : 'Contorno indisponível para estes dados.';
+      svg.append(svgElement('text', { x: PLOT.x + PLOT.width / 2, y: PLOT.y + PLOT.height / 2 - 12, 'text-anchor': 'middle', 'font-size': 13, fill: COLORS.text }, message));
+    }
+    markerGroup = svgElement('g', { class: 'chart-markers', 'clip-path': 'url(#interaction-plot-clip)' });
+    hoverGroup = svgElement('g', { class: 'chart-crosshair', 'pointer-events': 'none', 'clip-path': 'url(#interaction-plot-clip)' });
+    svg.append(markerGroup, hoverGroup);
+    drawMarkers();
+    resetButton.disabled = !enabled;
+  }
+
+  function showNearest(event, position) {
+    if (!enabled || !inPlot(position)) return hideHover();
+    let nearest = null;
+    let shortest = Infinity;
+    for (const point of contour) {
+      const screen = project(point);
+      const distance = (position.x - screen.x) ** 2 + (position.y - screen.y) ** 2;
+      if (distance < shortest) { nearest = point; shortest = distance; }
+    }
+    if (!nearest) return hideHover();
+    const target = project(nearest);
+    hoverGroup.replaceChildren(
+      svgElement('line', { x1: PLOT.x, y1: target.y, x2: PLOT.x + PLOT.width, y2: target.y, stroke: COLORS.curve, 'stroke-dasharray': '3 4', opacity: .5 }),
+      svgElement('line', { x1: target.x, y1: PLOT.y, x2: target.x, y2: PLOT.y + PLOT.height, stroke: COLORS.curve, 'stroke-dasharray': '3 4', opacity: .5 }),
+      svgElement('circle', { cx: target.x, cy: target.y, r: 4, stroke: COLORS.curve, fill: '#ffffff', 'stroke-width': 2 }),
+    );
+    const axial = nearest.nKn ?? current.interaction?.nKn;
+    tooltip.textContent = `Contorno: Mx ${format(nearest.mxKnm)} kN·m · My ${format(nearest.myKnm)} kN·m · c ${Number.isFinite(nearest.neutralAxisCm) ? `${format(nearest.neutralAxisCm)} cm` : '—'} · N ${format(axial)} kN`;
+    const bounds = canvas.getBoundingClientRect();
+    tooltip.hidden = false;
+    tooltip.style.left = `${Math.max(4, Math.min(event.clientX - bounds.left + 12, bounds.width - tooltip.offsetWidth - 4))}px`;
+    tooltip.style.top = `${Math.max(4, Math.min(event.clientY - bounds.top + 12, bounds.height - tooltip.offsetHeight - 4))}px`;
+  }
+
+  function publishDemand(point) {
+    if (!validMoment(point) || typeof onDemandChange !== 'function') return;
+    // Preserve precision without leaking floating-point display noise into inputs.
+    onDemandChange({ mxKnm: Number(point.mxKnm.toPrecision(12)), myKnm: Number(point.myKnm.toPrecision(12)) });
+  }
+
+  svg.addEventListener('pointerdown', (event) => {
+    const position = pointerPosition(event);
+    if (!enabled || !inPlot(position) || (event.button !== 0 && event.pointerType === 'mouse')) return;
+    event.preventDefault();
+    svg.focus({ preventScroll: true });
+    dragging = event.pointerId;
+    preview = unproject(position);
+    hideHover();
+    svg.setPointerCapture?.(event.pointerId);
+    drawMarkers();
+  });
+  svg.addEventListener('pointermove', (event) => {
+    const position = pointerPosition(event);
+    if (dragging === event.pointerId && position) {
+      preview = unproject(clampToPlot(position));
+      drawMarkers();
+    } else if (position) showNearest(event, position);
+  });
+  svg.addEventListener('pointerup', (event) => {
+    if (dragging !== event.pointerId) return;
+    const position = pointerPosition(event);
+    const selected = position ? unproject(clampToPlot(position)) : preview;
+    dragging = null;
+    preview = null;
+    if (svg.hasPointerCapture?.(event.pointerId)) svg.releasePointerCapture(event.pointerId);
+    publishDemand(selected);
+    drawMarkers();
+  });
+  svg.addEventListener('pointercancel', () => { dragging = null; preview = null; hideHover(); drawMarkers(); });
+  svg.addEventListener('lostpointercapture', () => { if (dragging !== null) { dragging = null; preview = null; drawMarkers(); } });
+  svg.addEventListener('pointerleave', () => { if (dragging === null) hideHover(); });
+  svg.addEventListener('blur', hideHover);
+  svg.addEventListener('wheel', (event) => {
+    const position = pointerPosition(event);
+    if (!enabled || !inPlot(position)) return;
+    event.preventDefault();
+    const anchor = unproject(position);
+    const nextZoom = Math.min(30, Math.max(.25, zoom * Math.exp(-Math.sign(event.deltaY) * .18)));
+    if (nextZoom === zoom) return;
+    zoom = nextZoom;
+    view.unitsPerPixel = baseView.unitsPerPixel / zoom;
+    view.centerMy = anchor.myKnm - (position.x - PLOT.x - PLOT.width / 2) * view.unitsPerPixel;
+    view.centerMx = anchor.mxKnm + (position.y - PLOT.y - PLOT.height / 2) * view.unitsPerPixel;
+    draw();
+  }, { passive: false });
+  svg.addEventListener('keydown', (event) => {
+    if (!enabled || !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) return;
+    event.preventDefault();
+    const next = validMoment(demand) ? { ...demand } : { mxKnm: 0, myKnm: 0 };
+    const step = view.unitsPerPixel * PLOT.height * .01 * (event.shiftKey ? 10 : 1);
+    if (event.key === 'ArrowLeft') next.myKnm -= step;
+    if (event.key === 'ArrowRight') next.myKnm += step;
+    if (event.key === 'ArrowUp') next.mxKnm += step;
+    if (event.key === 'ArrowDown') next.mxKnm -= step;
+    publishDemand(next);
+  });
+
+  function resetView() {
+    fitView();
+    zoom = 1;
+    view = { ...baseView };
+    draw();
+  }
+  resetButton.addEventListener('click', resetView);
+
+  function render(sectionResult, { eulerDemand: nextEuler = null } = {}) {
+    current = sectionResult || null;
+    contour = current?.interaction?.status === 'ok' && Array.isArray(current.interaction.points)
+      ? current.interaction.points.filter(validMoment) : [];
+    enabled = contour.length >= 3;
+    demand = validMoment(current?.demand) ? current.demand : null;
+    eulerDemand = current && validMoment(nextEuler) ? nextEuler : null;
+    preview = null;
+    dragging = null;
+    const extentKey = contour.map(({ mxKnm, myKnm }) => `${mxKnm},${myKnm}`).join(';');
+    const changedContour = extentKey !== lastExtentKey;
+    lastExtentKey = extentKey;
+    if (changedContour || !enabled) {
+      fitView();
+      view = { ...baseView };
+      zoom = 1;
+    } else if (zoom === 1) {
+      // A new load outside the current extent still belongs in the initial view.
+      fitView();
+      view = { ...baseView };
+    }
+    legend.replaceChildren();
+    if (enabled) addLegend('Contorno da seção calculada', COLORS.curve);
+    if (demand) addLegend('Demanda informada', current.demand.inside === false ? COLORS.outside : current.demand.inside === true ? COLORS.inside : COLORS.text, 'point');
+    if (eulerDemand) addLegend('Demanda amplificada pelo modelo de Euler', COLORS.euler, 'diamond');
+    stateLabel.textContent = !current ? 'Gráfico aguardando dados válidos.'
+      : !enabled ? current.interaction?.status === 'axial-out-of-range' ? 'Não há contorno para esta força normal no intervalo do modelo.' : 'Não foi possível gerar um contorno válido.'
+        : `N = ${format(current.interaction.nKn)} kN. Demanda: Mx = ${format(demand?.mxKnm)} kN·m; My = ${format(demand?.myKnm)} kN·m. ${current.demand?.inside === true ? 'Demanda dentro do contorno calculado.' : current.demand?.inside === false ? 'Demanda fora do contorno calculado.' : 'Posição da demanda não definida.'}`;
+    draw();
+  }
+
+  render(null);
+  return { render, resetView };
+}
+
+return { createInteractionChart };
+})();
+__modules["app.js"] = (() => {
+const { analyzeColumn, InputValidationError } = __modules["analysis.js"];
+const { analyzeSection, SectionValidationError } = __modules["section.js"];
+const { createInteractionChart } = __modules["chart.js"];
+
+const MODEL_VERSION = '1.1.0';
 const DEFAULT_INPUT = Object.freeze({
   bxCm: 9,
   byCm: 30,
@@ -647,7 +1452,17 @@ const DEFAULT_INPUT = Object.freeze({
   mxKnm: 0,
   myKnm: 0,
   loadFactor: 1,
+  fckMpa: 30,
+  fykMpa: 500,
+  gammaC: 1.4,
+  gammaS: 1.15,
+  esGPa: 200,
+  coverCm: 2.5,
+  barDiameterMm: 10,
+  barsX: 2,
+  barsY: 3,
 });
+const SECTION_RESOLUTION = Object.freeze({ points: 72, mesh: 36 });
 
 const form = document.querySelector('#column-form');
 const results = document.querySelector('#results');
@@ -656,9 +1471,20 @@ const formError = document.querySelector('#form-error');
 const formState = document.querySelector('#form-state');
 const exportButton = document.querySelector('#export-button');
 const printButton = document.querySelector('#print-button');
+const sectionStatus = document.querySelector('#section-status');
+const eulerMarkerCheckbox = document.querySelector('#show-euler-marker');
 let currentAnalysis = null;
 let dirty = false;
 let notificationTimer;
+const chart = createInteractionChart(document.querySelector('#interaction-chart'), {
+  onDemandChange: ({ mxKnm, myKnm }) => {
+    const factor = Number(form.elements.namedItem('loadFactor').value);
+    if (!Number.isFinite(factor) || factor <= 0) return;
+    form.elements.namedItem('mxKnm').value = String(Number((mxKnm / factor).toPrecision(12)));
+    form.elements.namedItem('myKnm').value = String(Number((myKnm / factor).toPrecision(12)));
+    if (updateAnalysis()) notify('Momentos atualizados pelo gráfico.');
+  },
+});
 
 function number(value, digits = 2) {
   if (value === null || value === undefined || !Number.isFinite(value)) return '—';
@@ -716,7 +1542,7 @@ function displayStatus(result) {
   status.append(prefix, document.createTextNode(description));
 }
 
-function renderGeometry(result) {
+function renderGeometry(result, reinforcedSection) {
   const { input, section } = result;
   metric('metric-section', `${number(input.bxCm, 0)} × ${number(input.byCm, 0)}`, 'cm');
   if (!Number.isInteger(input.bxCm) || !Number.isInteger(input.byCm)) {
@@ -762,6 +1588,62 @@ function renderGeometry(result) {
     ? `${number(input.lengthXM, 1)} m livres`
     : `Lx ${number(input.lengthXM, 1)} / Ly ${number(input.lengthYM, 1)} m`);
   document.getElementById('section-diagram').setAttribute('aria-label', `Seção retangular de ${number(input.bxCm, 1)} por ${number(input.byCm, 1)} centímetros, com eixos de flexão x e y`);
+  const barGroup = document.getElementById('section-bars');
+  barGroup.replaceChildren();
+  const drawingScale = 145 / maxDimension;
+  for (const bar of reinforcedSection?.reinforcement?.bars || []) {
+    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('cx', 105 + bar.xCm * drawingScale);
+    dot.setAttribute('cy', 116 - bar.yCm * drawingScale);
+    dot.setAttribute('r', Math.max(1.7, reinforcedSection.input.barDiameterMm / 20 * drawingScale));
+    dot.setAttribute('class', 'reinforcement-bar');
+    const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+    title.textContent = `Barra: x ${number(bar.xCm, 2)} cm; y ${number(bar.yCm, 2)} cm; As ${number(bar.areaCm2, 3)} cm²`;
+    dot.append(title);
+    barGroup.append(dot);
+  }
+}
+
+function renderSection(sectionResult) {
+  const { materials, reinforcement, interaction, demand, input } = sectionResult;
+  setText('reinforcement-area', `${number(reinforcement.areaCm2, 2)} cm²`);
+  setText('reinforcement-count', `${reinforcement.count} barras φ${number(input.barDiameterMm, 0)} mm`);
+  setText('reinforcement-ratio', `${number(reinforcement.ratioPercent, 2)} %`);
+  setText('design-materials', `${number(materials.fcdMpa, 2)} / ${number(materials.fydMpa, 2)} MPa`);
+  setText('concrete-peak', `Pico do concreto: ${number(materials.concretePeakMpa, 2)} MPa`);
+  sectionStatus.className = 'section-status';
+  if (interaction.status === 'axial-out-of-range') {
+    sectionStatus.classList.add('is-warning');
+    sectionStatus.textContent = `N = ${number(interaction.nKn, 2)} kN está fora do intervalo axial deste modelo de seção (${number(interaction.axialRange.minKn, 2)} a ${number(interaction.axialRange.maxKn, 2)} kN). O contorno não é gerado.`;
+  } else if (interaction.status !== 'ok') {
+    sectionStatus.classList.add('is-warning');
+    sectionStatus.textContent = 'O contorno da seção é degenerado ou não pode ser comparado para estes parâmetros. Nenhuma conclusão sobre o pilar é obtida.';
+  } else if (demand.inside === false) {
+    sectionStatus.classList.add('is-critical');
+    sectionStatus.textContent = `N = ${number(interaction.nKn, 2)} kN · ponto de primeira ordem fora do contorno calculado da seção. Esta comparação não é uma verificação global do pilar.`;
+  } else if (demand.inside === true) {
+    sectionStatus.textContent = `N = ${number(interaction.nKn, 2)} kN · ponto de primeira ordem dentro do contorno deste modelo simplificado de seção. Isso não verifica estabilidade global ou adequação para uma obra.`;
+  } else {
+    sectionStatus.classList.add('is-warning');
+    sectionStatus.textContent = `Contorno calculado para N = ${number(interaction.nKn, 2)} kN. A posição da demanda não foi comparada.`;
+  }
+}
+
+function renderChart(analysis = currentAnalysis) {
+  if (!analysis) {
+    chart.render(null);
+    eulerMarkerCheckbox.disabled = true;
+    setText('euler-marker-note', 'Atualize a análise para usar o gráfico.');
+    return;
+  }
+  const xMoment = analysis.axes.x.amplifiedMomentKnm;
+  const yMoment = analysis.axes.y.amplifiedMomentKnm;
+  const eulerDefined = Number.isFinite(xMoment) && xMoment !== null && Number.isFinite(yMoment) && yMoment !== null;
+  eulerMarkerCheckbox.disabled = !eulerDefined;
+  setText('euler-marker-note', eulerDefined ? 'Hipótese ideal; não é análise global de segunda ordem.' : 'Amplificação de Euler indefinida para esta carga.');
+  chart.render(analysis.reinforcedSection, {
+    eulerDemand: eulerDefined && eulerMarkerCheckbox.checked ? { mxKnm: xMoment, myKnm: yMoment } : null,
+  });
 }
 
 function renderAxes(result) {
@@ -805,12 +1687,17 @@ function renderStress(result) {
   });
 }
 
-function renderNotes(result) {
+function renderNotes(result, sectionResult) {
   const notes = document.getElementById('model-notes');
   notes.replaceChildren();
   for (const note of result.notes || []) {
     const element = document.createElement('li');
-    element.textContent = typeof note === 'string' ? note : String(note.message || note);
+    element.textContent = `Módulo elástico: ${typeof note === 'string' ? note : String(note.message || note)}`;
+    notes.append(element);
+  }
+  for (const note of sectionResult.notes || []) {
+    const element = document.createElement('li');
+    element.textContent = `Modelo da seção: ${typeof note === 'string' ? note : String(note.message || note)}`;
     notes.append(element);
   }
 }
@@ -825,21 +1712,46 @@ function setClean() {
 }
 
 function updateAnalysis() {
-  if (!form.reportValidity()) return false;
+  if (!form.reportValidity()) {
+    dirty = true;
+    results.setAttribute('data-stale', 'true');
+    formState.classList.add('is-dirty');
+    formState.textContent = 'Corrija as entradas inválidas e atualize a análise.';
+    status.className = 'analysis-status is-warning';
+    status.textContent = 'Análise não atualizada: existem entradas inválidas. Os números anteriores não representam este formulário.';
+    sectionStatus.className = 'section-status is-warning';
+    sectionStatus.textContent = 'Corrija as entradas para gerar um novo contorno.';
+    renderChart(null);
+    exportButton.disabled = true;
+    printButton.disabled = true;
+    return false;
+  }
   results.setAttribute('aria-busy', 'true');
   formError.hidden = true;
   try {
-    const analysis = analyzeColumn(readInput());
-    renderGeometry(analysis);
+    const input = readInput();
+    const analysis = analyzeColumn(input);
+    const reinforcedSection = analyzeSection({
+      bxCm: input.bxCm, byCm: input.byCm,
+      fckMpa: input.fckMpa, fykMpa: input.fykMpa,
+      gammaC: input.gammaC, gammaS: input.gammaS,
+      esGPa: input.esGPa, coverCm: input.coverCm,
+      barDiameterMm: input.barDiameterMm,
+      barsX: input.barsX, barsY: input.barsY,
+      ...analysis.loads, ...SECTION_RESOLUTION,
+    });
+    renderGeometry(analysis, reinforcedSection);
     renderAxes(analysis);
     renderStress(analysis);
-    renderNotes(analysis);
+    renderSection(reinforcedSection);
+    renderNotes(analysis, reinforcedSection);
     displayStatus(analysis);
-    currentAnalysis = analysis;
+    currentAnalysis = { ...analysis, input: { ...input }, reinforcedSection };
+    renderChart();
     setClean();
     return true;
   } catch (error) {
-    const message = error instanceof InputValidationError
+    const message = error instanceof InputValidationError || error instanceof SectionValidationError
       ? error.message
       : 'Não foi possível concluir a análise. Revise as entradas e tente novamente.';
     formError.textContent = message;
@@ -847,6 +1759,11 @@ function updateAnalysis() {
     results.setAttribute('data-stale', 'true');
     status.className = 'analysis-status is-error';
     status.textContent = `Análise não atualizada. ${message}`;
+    sectionStatus.className = 'section-status is-warning';
+    sectionStatus.textContent = 'Dados inválidos: o contorno foi removido. Revise materiais e configuração das barras.';
+    renderChart(null);
+    for (const id of ['reinforcement-area', 'reinforcement-count', 'reinforcement-ratio', 'design-materials', 'concrete-peak']) setText(id, '—');
+    document.getElementById('section-bars').replaceChildren();
     exportButton.disabled = true;
     printButton.disabled = true;
     return false;
@@ -875,12 +1792,28 @@ form.addEventListener('input', () => {
   results.setAttribute('data-stale', 'true');
   status.className = 'analysis-status is-warning';
   status.textContent = 'Resultados desatualizados: os números abaixo pertencem ao último cenário calculado. Atualize a análise para usar as entradas atuais.';
+  sectionStatus.className = 'section-status is-warning';
+  sectionStatus.textContent = 'Entradas alteradas. Atualize a análise para recalcular o contorno e os esforços.';
+  renderChart(null);
 });
 
 document.getElementById('reset-button').addEventListener('click', () => {
   for (const [key, value] of Object.entries(DEFAULT_INPUT)) form.elements.namedItem(key).value = String(value);
   updateAnalysis();
   notify('Cenário restaurado: 9 × 30 cm e 6 m livres, sem esforços informados.');
+});
+
+document.getElementById('example-button').addEventListener('click', () => {
+  const example = { ...DEFAULT_INPUT, bxCm: 40, byCm: 40, lengthXM: 8, lengthYM: 8, coverCm: 5, barDiameterMm: 20, barsX: 4, barsY: 4, nKn: 3000 };
+  for (const [key, value] of Object.entries(example)) form.elements.namedItem(key).value = String(value);
+  eulerMarkerCheckbox.checked = false;
+  updateAnalysis();
+  chart.resetView();
+  notify('Exemplo de demonstração carregado: 40 × 40 cm, 12 barras φ20 e N = 3.000 kN.');
+});
+
+eulerMarkerCheckbox.addEventListener('change', () => {
+  if (!dirty) renderChart();
 });
 
 exportButton.addEventListener('click', () => {
@@ -891,11 +1824,18 @@ exportButton.addEventListener('click', () => {
     version: MODEL_VERSION,
     generatedAt: new Date().toISOString(),
     model: {
-      label: 'Modelo experimental de barra elástica ideal',
+      label: 'Modelo experimental de seção de concreto armado e barra elástica ideal',
       normativeVerification: false,
       dimensionalGammaNApplied: false,
-      interpretation: 'Força crítica teórica de Euler; não representa carga admissível, capacidade resistente ou dimensionamento de obra.',
-      limitations: ['fissuração', 'fluência', 'armadura', 'imperfeições', 'capacidade resistente', 'conexões', 'interação com a estrutura', 'verificações normativas'],
+      interpretation: 'O contorno representa a seção simplificada para N fixo. Euler representa estabilidade de uma barra ideal. Nenhum dos resultados constitui dimensionamento completo ou adequação para uma obra.',
+      sectionAssumptions: {
+        concrete: 'Parábola–retângulo; pico 0,85 fck/γc; concreto tracionado desprezado.',
+        steel: 'Barras periféricas, comportamento elastoplástico e tensão limite fyk/γs.',
+        coverDefinition: 'Distância da face ao centro das barras; não representa cobrimento nominal.',
+        discretization: SECTION_RESOLUTION,
+        demands: 'N, Mx e My após multiplicador de ações; curva comparada com primeira ordem.',
+      },
+      limitations: ['fluência', 'imperfeições', 'detalhamento de armaduras', 'estribos', 'conexões', 'análise global não linear', 'interação com a estrutura', 'verificações normativas'],
     },
     inputs: currentAnalysis.input,
     results: currentAnalysis,
@@ -922,10 +1862,13 @@ printButton.addEventListener('click', () => {
 window.addEventListener('beforeprint', () => {
   if (dirty) updateAnalysis();
   document.querySelector('.method-panel details').open = true;
+  document.querySelectorAll('.input-details').forEach((element) => { element.open = true; });
 });
 
 updateAnalysis();
 
+return {  };
+})();
 })();
     </script>
   </body>

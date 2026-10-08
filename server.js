@@ -7,6 +7,8 @@ const files = new Map([
   ['/index.html', ['index.html', 'text/html; charset=utf-8']],
   ['/src/app.js', ['src/app.js', 'text/javascript; charset=utf-8']],
   ['/src/analysis.js', ['src/analysis.js', 'text/javascript; charset=utf-8']],
+  ['/src/section.js', ['src/section.js', 'text/javascript; charset=utf-8']],
+  ['/src/chart.js', ['src/chart.js', 'text/javascript; charset=utf-8']],
   ['/src/styles.css', ['src/styles.css', 'text/css; charset=utf-8']],
 ]);
 const port = Number(process.env.PORT || 3000);
