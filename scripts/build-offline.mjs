@@ -47,7 +47,7 @@ let output = replaceExactlyOnce(
 );
 output = replaceExactlyOnce(
   output,
-  /<script\s+type="module"\s+src="\/src\/app\.js"><\/script>/g,
+  /^[ \t]*<script\s+type="module"\s+src="\/src\/app\.js"><\/script>[ \t]*(?:\r?\n|$)/gm,
   '',
   'module script',
 );
